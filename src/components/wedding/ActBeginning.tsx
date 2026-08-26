@@ -121,7 +121,7 @@ export default function ActBeginning() {
   const petalOpacity = useTransform(p, [0.85, 1], [0, 1]);
 
   const [hover, setHover] = useState<"groom" | "bride" | null>(null);
-  const [seen, setSeen] = useState<Record<string, boolean>>({});
+  const [seen, setSeen] = useState<{ groom?: boolean; bride?: boolean }>({});
   const bothSeen = seen.groom && seen.bride;
 
   const touch = (who: "groom" | "bride") => {

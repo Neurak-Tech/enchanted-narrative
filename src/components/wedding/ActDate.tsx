@@ -154,16 +154,15 @@ function Eruption() {
 }
 
 export default function ActDate() {
-  const [done, setDone] = useState<Record<string, boolean>>({});
-  const all = ["day", "month", "year"].every((k) => done[k]);
+  const [done, setDone] = useState<{ day?: boolean; month?: boolean; year?: boolean }>({});
+  const all = !!(done.day && done.month && done.year);
   const [erupt, setErupt] = useState(false);
 
   useEffect(() => {
-    if (all) {
-      setErupt(true);
-      const t = setTimeout(() => setErupt(false), 4200);
-      return () => clearTimeout(t);
-    }
+    if (!all) return;
+    setErupt(true);
+    const t = setTimeout(() => setErupt(false), 4200);
+    return () => clearTimeout(t);
   }, [all]);
 
   return (
