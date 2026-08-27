@@ -16,7 +16,8 @@ export default function ActWorld() {
   return (
     <section
       ref={ref}
-      className="relative overflow-hidden bg-[var(--gradient-dawn)] px-4 py-28 sm:py-36"
+      style={{ background: "var(--gradient-dawn)" }}
+      className="relative overflow-hidden px-4 py-28 sm:py-36"
     >
       <div className="mx-auto mb-12 max-w-2xl text-center">
         <p className="tracking-luxe text-[0.6rem] uppercase text-muted-foreground sm:text-xs">

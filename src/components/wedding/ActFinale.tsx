@@ -45,7 +45,8 @@ export default function ActFinale() {
   return (
     <section
       ref={ref}
-      className="relative min-h-screen overflow-hidden bg-[var(--gradient-night)] px-4 py-28 sm:py-36"
+      style={{ background: "var(--gradient-night)" }}
+      className="relative min-h-screen overflow-hidden px-4 py-28 sm:py-36"
     >
       <Lanterns />
 
