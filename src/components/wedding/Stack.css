@@ -1,0 +1,39 @@
+.rb-stack {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  perspective: 900px;
+  overflow: visible;
+}
+
+.rb-stack__layer {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+
+.rb-stack__layer {
+  position: absolute;
+  inset: 0;
+}
+
+.rb-stack__card {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.35rem 0.35rem 1.1rem 1.1rem;
+  background: var(--pearl);
+  box-shadow:
+    0 24px 50px -28px color-mix(in srgb, var(--ink) 55%, transparent),
+    0 0 0 1.5px var(--ink);
+}
+
+.rb-stack__card img,
+.rb-stack__card canvas {
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}

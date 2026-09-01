@@ -47,60 +47,66 @@
 :root {
   --radius: 0.75rem;
 
-  --ivory: oklch(0.975 0.012 85);
-  --pearl: oklch(0.99 0.004 95);
-  --beige: oklch(0.93 0.022 80);
-  --gold: oklch(0.82 0.085 85);
-  --gold-deep: oklch(0.68 0.1 76);
-  --rose: oklch(0.74 0.07 20);
-  --blush: oklch(0.9 0.04 25);
-  --ink: oklch(0.28 0.02 60);
-  --night: oklch(0.17 0.035 275);
+  /* Singular theme: maroon → brick → terracotta → peach + black & white */
+  --ember-deep: #60241e;
+  --brick: #95271d;
+  --terracotta: #b34a44;
+  --peach: #e77b49;
+  --ink: #000000;
+  --pearl: #ffffff;
+  --night: #000000;
 
-  --background: var(--ivory);
+  /* Legacy semantic aliases → new palette (keeps existing class names working) */
+  --ivory: #ffffff;
+  --beige: color-mix(in srgb, var(--peach) 22%, white);
+  --gold: var(--peach);
+  --gold-deep: var(--brick);
+  --rose: var(--terracotta);
+  --blush: color-mix(in srgb, var(--peach) 28%, white);
+
+  --background: var(--pearl);
   --foreground: var(--ink);
   --card: var(--pearl);
   --card-foreground: var(--ink);
   --popover: var(--pearl);
   --popover-foreground: var(--ink);
-  --primary: var(--gold-deep);
-  --primary-foreground: oklch(0.99 0.004 95);
+  --primary: var(--brick);
+  --primary-foreground: var(--pearl);
   --secondary: var(--beige);
   --secondary-foreground: var(--ink);
-  --muted: oklch(0.95 0.014 80);
-  --muted-foreground: oklch(0.55 0.02 65);
-  --accent: var(--blush);
-  --accent-foreground: var(--ink);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.99 0 0);
-  --border: oklch(0.9 0.02 80);
-  --input: oklch(0.9 0.02 80);
-  --ring: var(--gold);
+  --muted: color-mix(in srgb, var(--terracotta) 12%, white);
+  --muted-foreground: #1a1a1a;
+  --accent: var(--terracotta);
+  --accent-foreground: var(--pearl);
+  --destructive: var(--brick);
+  --destructive-foreground: var(--pearl);
+  --border: color-mix(in srgb, var(--ink) 28%, transparent);
+  --input: color-mix(in srgb, var(--ink) 28%, transparent);
+  --ring: var(--peach);
 
   --gradient-foil: linear-gradient(
     115deg,
-    oklch(0.78 0.08 82) 0%,
-    oklch(0.93 0.07 92) 18%,
-    oklch(0.7 0.1 74) 34%,
-    oklch(0.96 0.05 95) 52%,
-    oklch(0.74 0.09 78) 70%,
-    oklch(0.9 0.07 90) 86%,
-    oklch(0.72 0.09 76) 100%
+    var(--peach) 0%,
+    #ff9a6a 18%,
+    var(--terracotta) 36%,
+    var(--peach) 52%,
+    var(--brick) 72%,
+    var(--terracotta) 100%
   );
   --gradient-dawn: linear-gradient(
     180deg,
     var(--pearl) 0%,
-    var(--ivory) 40%,
-    oklch(0.94 0.03 40) 100%
+    color-mix(in srgb, var(--peach) 14%, white) 42%,
+    color-mix(in srgb, var(--terracotta) 18%, white) 100%
   );
   --gradient-night: radial-gradient(
       ellipse at 50% 120%,
-      oklch(0.3 0.06 285) 0%,
-      transparent 60%
+      var(--ember-deep) 0%,
+      transparent 58%
     ),
-    linear-gradient(180deg, oklch(0.13 0.03 275) 0%, oklch(0.2 0.045 285) 100%);
-  --shadow-soft: 0 30px 80px -30px color-mix(in oklab, var(--ink) 35%, transparent);
-  --shadow-glow: 0 0 60px color-mix(in oklab, var(--gold) 55%, transparent);
+    linear-gradient(180deg, #000000 0%, var(--ember-deep) 100%);
+  --shadow-soft: 0 28px 70px -28px color-mix(in srgb, var(--ink) 55%, transparent);
+  --shadow-glow: 0 0 48px color-mix(in srgb, var(--peach) 50%, transparent);
   --ease-silk: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -121,7 +127,8 @@
   }
 
   ::selection {
-    background: color-mix(in oklab, var(--gold) 45%, transparent);
+    background: color-mix(in srgb, var(--peach) 45%, transparent);
+    color: var(--ink);
   }
 }
 
@@ -148,9 +155,9 @@
 }
 
 @utility glass-panel {
-  background: color-mix(in oklab, var(--pearl) 62%, transparent);
-  backdrop-filter: blur(18px) saturate(1.2);
-  border: 1px solid color-mix(in oklab, var(--gold) 40%, transparent);
+  background: color-mix(in srgb, var(--pearl) 82%, transparent);
+  backdrop-filter: blur(18px) saturate(1.1);
+  border: 1.5px solid var(--ink);
   box-shadow: var(--shadow-soft);
 }
 
@@ -207,20 +214,6 @@
   100% {
     opacity: 0;
     transform: translateY(-90px) scale(1.4);
-  }
-}
-
-@keyframes lantern-up {
-  0% {
-    transform: translateY(20vh) translateX(0);
-    opacity: 0;
-  }
-  15% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(-120vh) translateX(40px);
-    opacity: 0;
   }
 }
 

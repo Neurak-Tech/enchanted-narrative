@@ -1,214 +1,260 @@
-import { useState } from "react";
-import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "motion/react";
-import groomImg from "@/assets/groom.png";
-import brideImg from "@/assets/bride.png";
-import { COUPLE } from "./data";
+import { useRef, type ReactNode, type ComponentProps } from "react";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useSpring,
+  type MotionValue,
+} from "motion/react";
+import couple from "@/assets/couple-illustration.png";
+import { COUPLE, COUPLE_PROFILE } from "./data";
+import { cn } from "@/lib/utils";
 
-type Person = {
-  name: string;
-  role: string;
-  img: string;
-  facts: string[];
-  reel: string;
-  reelCaption: string;
-};
+const SECTION_BG =
+  "radial-gradient(ellipse at 50% 8%, #ffffff 0%, #e8a090 42%, #b34a44 100%)";
 
-const PEOPLE: Person[] = [
-  {
-    name: COUPLE.groom,
-    role: "The one who plans everything twice",
-    img: groomImg,
-    facts: ["Makes terrible puns", "Can't cook rice", "Cried first", "Secretly a dancer"],
-    reel: "linear-gradient(130deg, oklch(0.93 0.03 85), oklch(0.82 0.06 60), oklch(0.9 0.04 30))",
-    reelCaption: "Aarav, mid-baraat, absolutely gone",
-  },
-  {
-    name: COUPLE.bride,
-    role: "The one who makes it magic",
-    img: brideImg,
-    facts: ["Laughs too loud", "Reads two books at once", "Said yes instantly", "Collects postcards"],
-    reel: "linear-gradient(130deg, oklch(0.94 0.035 25), oklch(0.86 0.06 20), oklch(0.92 0.05 80))",
-    reelCaption: "Meera, laughing at nothing, as usual",
-  },
-];
+const GROOM_CLIP = "polygon(0% 0%, 50% 0%, 50% 100%, 0% 100%)";
+const BRIDE_CLIP = "polygon(50% 0%, 100% 0%, 100% 100%, 50% 100%)";
 
-function Portrait({ p, flip }: { p: Person; flip?: boolean }) {
-  const [open, setOpen] = useState(false);
-  const [fact, setFact] = useState<string | null>(null);
-  const mx = useMotionValue(0);
-  const my = useMotionValue(0);
-  const rx = useSpring(useTransform(my, [-0.5, 0.5], [10, -10]), { stiffness: 140, damping: 14 });
-  const ry = useSpring(useTransform(mx, [-0.5, 0.5], [-12, 12]), { stiffness: 140, damping: 14 });
+type Side = "bride" | "groom";
+
+function alternatingTraits() {
+  const groom = COUPLE_PROFILE.groom.traits;
+  const bride = COUPLE_PROFILE.bride.traits;
+  const count = Math.max(groom.length, bride.length);
+  const items: { text: string; side: Side; key: string }[] = [];
+
+  for (let i = 0; i < count; i++) {
+    if (groom[i]) items.push({ text: groom[i]!, side: "groom", key: `g-${i}` });
+    if (bride[i]) items.push({ text: bride[i]!, side: "bride", key: `b-${i}` });
+  }
+
+  return items;
+}
+
+function traitRanges(start: number, count: number, step = 0.085) {
+  return Array.from({ length: count }, (_, i) => [start + i * step, start + (i + 1) * step] as const);
+}
+
+function WeddingRings({ scale, opacity }: { scale: MotionValue<number>; opacity: MotionValue<number> }) {
+  return (
+    <motion.svg
+      style={{ scale, opacity }}
+      viewBox="0 0 120 64"
+      className="mx-auto h-14 w-24 drop-shadow-sm sm:h-16 sm:w-28"
+      aria-hidden
+    >
+      <circle cx="42" cy="36" r="18" fill="none" stroke="#e77b49" strokeWidth="3.2" />
+      <circle cx="78" cy="36" r="18" fill="none" stroke="#000000" strokeWidth="2.6" />
+      <path
+        d="M56 28c2-6 8-10 14-8"
+        fill="none"
+        stroke="#e77b49"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
+    </motion.svg>
+  );
+}
+
+function ThoughtBubble({
+  children,
+  className,
+  style,
+}: {
+  children: ReactNode;
+  className?: string;
+  style?: ComponentProps<typeof motion.div>["style"];
+}) {
+  return (
+    <motion.div
+      style={style}
+      className={cn(
+        "rounded-[1.1rem] bg-white px-3.5 py-2.5 text-ink shadow-[0_10px_32px_-10px_rgba(0,0,0,0.45)] ring-1 ring-black/15 sm:px-4 sm:py-3",
+        className,
+      )}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+function GapThought({
+  text,
+  p,
+  range,
+  side,
+}: {
+  text: string;
+  p: MotionValue<number>;
+  range: readonly [number, number];
+  side: Side;
+}) {
+  const [start, end] = range;
+  const isGroom = side === "groom";
+  const mid = (start + end) / 2;
+  const opacity = useTransform(
+    p,
+    [start, start + (mid - start) * 0.35, end - (end - mid) * 0.35, end],
+    [0, 1, 1, 0],
+  );
+  const y = useTransform(p, [start, mid, end], [12, 0, -8]);
+  const scale = useTransform(p, [start, mid, end], [0.94, 1, 0.96]);
 
   return (
-    <div className="relative" style={{ perspective: 1400 }}>
-      <motion.div
-        onPointerMove={(e) => {
-          const r = e.currentTarget.getBoundingClientRect();
-          mx.set((e.clientX - r.left) / r.width - 0.5);
-          my.set((e.clientY - r.top) / r.height - 0.5);
-        }}
-        onPointerLeave={() => {
-          mx.set(0);
-          my.set(0);
-        }}
-        onClick={() => setOpen((o) => !o)}
-        style={{ rotateX: rx, rotateY: ry, transformStyle: "preserve-3d" }}
-        whileHover={{ scale: 1.02 }}
-        className="group relative h-[30rem] w-[19rem] cursor-pointer rounded-[1.5rem] border border-gold/50 bg-[linear-gradient(160deg,oklch(0.99_0.006_95),oklch(0.94_0.025_80))] p-3 shadow-[var(--shadow-soft)] sm:h-[34rem] sm:w-[22rem]"
-      >
-        <div className="relative h-full w-full overflow-hidden rounded-[1rem] bg-[radial-gradient(circle_at_50%_20%,oklch(0.97_0.02_60),oklch(0.9_0.035_35))]">
-          <AnimatePresence mode="wait">
-            {open ? (
-              <motion.div
-                key="reel"
-                initial={{ opacity: 0, scale: 1.1 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.96 }}
-                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                className="absolute inset-0"
-              >
-                <motion.div
-                  animate={{ scale: [1.05, 1.18], x: [0, -10], y: [0, -14] }}
-                  transition={{ duration: 8, repeat: Infinity, repeatType: "reverse" }}
-                  className="absolute inset-0"
-                  style={{ background: p.reel }}
-                />
-                <img
-                  src={p.img}
-                  alt={p.name}
-                  loading="lazy"
-                  width={768}
-                  height={1024}
-                  className="absolute inset-0 h-full w-full object-cover opacity-90 mix-blend-luminosity"
-                />
-                <div className="absolute inset-0 [background:repeating-linear-gradient(0deg,transparent_0_3px,oklch(0_0_0/0.05)_3px_4px)]" />
-                <motion.div
-                  initial={{ width: "0%" }}
-                  animate={{ width: "100%" }}
-                  transition={{ duration: 7, ease: "linear" }}
-                  onAnimationComplete={() => setOpen(false)}
-                  className="absolute bottom-0 left-0 h-[3px] bg-foil"
-                />
-                <p className="absolute bottom-6 left-5 right-5 font-display text-lg italic text-[oklch(0.99_0.005_90)] drop-shadow">
-                  {p.reelCaption}
-                </p>
-              </motion.div>
-            ) : (
-              <motion.img
-                key="still"
-                src={p.img}
-                alt={`Portrait of ${p.name}`}
-                loading="lazy"
-                width={768}
-                height={1024}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                style={{ transform: "translateZ(50px)" }}
-                className={`absolute inset-x-0 bottom-0 mx-auto h-[112%] w-auto max-w-none object-contain transition-transform duration-700 group-hover:scale-[1.06] ${flip ? "-scale-x-100 group-hover:-scale-x-[1.06]" : ""}`}
-              />
-            )}
-          </AnimatePresence>
-          <div className="pointer-events-none absolute inset-0 rounded-[1rem] shadow-[inset_0_0_60px_oklch(0.85_0.06_70/0.5)]" />
-        </div>
-        <div className="pointer-events-none absolute inset-x-0 -bottom-0.5 flex justify-center">
-          <span className="rounded-full bg-pearl px-4 py-1 font-script text-sm tracking-[0.3em] text-gold-deep ring-1 ring-gold/50">
-            {p.name.toUpperCase()}
-          </span>
-        </div>
-      </motion.div>
+    <motion.div
+      style={{ opacity, y, scale }}
+      className={cn(
+        "absolute top-[42%] w-[min(44vw,11.5rem)] -translate-y-1/2 sm:top-[40%] sm:w-48",
+        isGroom ? "left-1 sm:left-3" : "right-1 sm:right-3",
+      )}
+    >
+      <ThoughtBubble>
+        <p className="font-script text-[clamp(0.95rem,3.5vw,1.15rem)] leading-snug tracking-[0.05em]">
+          {text}
+        </p>
+      </ThoughtBubble>
+    </motion.div>
+  );
+}
 
-      {/* orbiting facts */}
-      <div className="pointer-events-none absolute inset-0 hidden lg:block">
-        {p.facts.map((f, i) => {
-          const angle = (i / p.facts.length) * Math.PI * 2;
-          return (
-            <motion.button
-              key={f}
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 4 + i, repeat: Infinity, ease: "easeInOut" }}
-              onClick={() => setFact(fact === f ? null : f)}
-              style={{
-                left: `calc(50% + ${Math.cos(angle) * 230}px)`,
-                top: `calc(50% + ${Math.sin(angle) * 210}px)`,
-              }}
-              className="pointer-events-auto absolute -translate-x-1/2 whitespace-nowrap rounded-full glass-panel px-3 py-1 text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:text-gold-deep"
-            >
-              {f}
-            </motion.button>
-          );
-        })}
-      </div>
+function PersonLayer({
+  side,
+  p,
+  enter,
+}: {
+  side: Side;
+  p: MotionValue<number>;
+  enter: readonly [number, number];
+}) {
+  const isGroom = side === "groom";
+  const enterX = useTransform(p, enter, isGroom ? ["-65vw", "0vw"] : ["65vw", "0vw"]);
+  const enterY = useTransform(p, enter, ["50vh", "0vh"]);
+  const opacity = useTransform(p, [enter[0], enter[0] + 0.05], [0, 1]);
 
-      <AnimatePresence>
-        {fact && (
-          <motion.p
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            className="absolute -bottom-14 left-1/2 w-64 -translate-x-1/2 text-center font-script text-lg text-rose"
-          >
-            “{fact}” — allegedly.
-          </motion.p>
-        )}
-      </AnimatePresence>
-    </div>
+  return (
+    <motion.div
+      className="absolute inset-0"
+      style={{
+        clipPath: isGroom ? GROOM_CLIP : BRIDE_CLIP,
+        x: enterX,
+        y: enterY,
+        opacity,
+      }}
+    >
+      <img
+        src={couple}
+        alt=""
+        aria-hidden
+        width={1536}
+        height={1024}
+        className="absolute bottom-0 left-1/2 h-[108%] w-auto max-w-none -translate-x-1/2 object-contain object-bottom"
+      />
+    </motion.div>
+  );
+}
+
+function PersonBubble({
+  side,
+  p,
+  showAt,
+}: {
+  side: Side;
+  p: MotionValue<number>;
+  showAt: number;
+}) {
+  const isGroom = side === "groom";
+  const name = isGroom ? COUPLE.groom : COUPLE.bride;
+  const role = isGroom ? COUPLE_PROFILE.groom.role : COUPLE_PROFILE.bride.role;
+  const opacity = useTransform(p, [showAt, showAt + 0.04], [0, 1]);
+  const y = useTransform(p, [showAt, showAt + 0.06], [12, 0]);
+
+  return (
+    <motion.div
+      style={{ opacity, y }}
+      className={cn(
+        "absolute top-0 w-[min(44vw,10.5rem)] sm:w-44",
+        isGroom ? "left-1 sm:left-3" : "right-1 sm:right-3",
+      )}
+    >
+      <ThoughtBubble>
+        <p className="font-script text-[0.7rem] tracking-[0.22em] sm:text-xs">{name.toUpperCase()}</p>
+        <p className="mt-1 text-[0.55rem] uppercase leading-snug tracking-[0.14em] text-muted-foreground sm:text-[0.6rem]">
+          {role}
+        </p>
+      </ThoughtBubble>
+    </motion.div>
   );
 }
 
 export default function ActCouple() {
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
+  const p = useSpring(scrollYProgress, { stiffness: 90, damping: 28, mass: 0.4 });
+
+  const headerOpacity = useTransform(p, [0, 0.06], [0, 1]);
+  const headerY = useTransform(p, [0, 0.08], [16, 0]);
+  const ringScale = useTransform(p, [0, 0.07], [0.78, 1]);
+
+  const groomEnter: readonly [number, number] = [0.06, 0.2];
+  const brideEnter: readonly [number, number] = [0.1, 0.24];
+
+  const alternating = alternatingTraits();
+  const traitScrollRanges = traitRanges(0.22, alternating.length);
+
+  const scrollHintOpacity = useTransform(p, [0.9, 0.97], [0, 1]);
+
   return (
     <section
-      id="act-4"
-      className="relative overflow-hidden bg-[radial-gradient(ellipse_at_50%_0%,oklch(0.97_0.02_60),oklch(0.92_0.035_35))] px-6 py-32"
+      ref={ref}
+      id="act-couple"
+      className="relative h-[520vh]"
+      style={{ background: SECTION_BG }}
     >
-      {/* lanterns */}
-      <div className="pointer-events-none absolute inset-0">
-        {Array.from({ length: 12 }).map((_, i) => (
-          <span
-            key={i}
-            className="absolute h-8 w-6 rounded-[45%] bg-[radial-gradient(circle_at_50%_35%,oklch(0.95_0.09_85),oklch(0.8_0.11_60))] opacity-70 blur-[0.4px] shadow-[var(--shadow-glow)]"
-            style={{
-              left: `${(i * 8.4 + 4) % 96}%`,
-              animation: `lantern-up ${22 + (i % 6) * 4}s ${i * 1.6}s linear infinite`,
-            }}
-          />
-        ))}
-      </div>
+      <div className="sticky top-0 h-[100dvh] overflow-hidden">
+        <div className="absolute inset-0" style={{ background: SECTION_BG }} />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_100%,transparent_35%,#00000012_100%)]" />
 
-      <div className="relative text-center">
-        <p className="text-[0.7rem] uppercase tracking-luxe text-muted-foreground">
-          Act Four — Meet the Couple
-        </p>
-        <h2 className="mt-6 font-display text-[clamp(2rem,5vw,3.6rem)]">
-          Two people, <span className="italic text-foil">one very long inside joke.</span>
-        </h2>
-        <p className="mt-3 text-xs uppercase tracking-[0.3em] text-muted-foreground">
-          hover to lift · click to play
-        </p>
-      </div>
-
-      <div className="relative mx-auto mt-24 flex max-w-6xl flex-wrap items-center justify-center gap-24">
-        {PEOPLE.map((p, i) => (
-          <Portrait key={p.name} p={p} flip={i === 1} />
-        ))}
-      </div>
-
-      <div className="relative mx-auto mt-32 max-w-md text-center">
-        <motion.div
-          initial={{ rotateY: 0 }}
-          whileInView={{ rotateY: [0, 180, 360] }}
-          viewport={{ once: true }}
-          transition={{ duration: 2.4, ease: [0.22, 1, 0.36, 1] }}
-          className="mx-auto h-28 w-44 rounded-md border border-gold/60 bg-pearl shadow-[var(--shadow-soft)]"
-          style={{ transformStyle: "preserve-3d" }}
+        <motion.header
+          style={{ opacity: headerOpacity, y: headerY }}
+          className="absolute inset-x-0 top-[max(0.75rem,env(safe-area-inset-top))] z-50 px-4 text-center sm:top-6"
         >
-          <div className="h-full w-full bg-[linear-gradient(180deg,transparent_49%,oklch(0.82_0.11_85/0.4)_50%)]" />
-        </motion.div>
-        <p className="mt-5 font-script text-sm tracking-[0.35em] text-gold-deep">
-          YOU'RE INVITED
-        </p>
+          <WeddingRings scale={ringScale} opacity={headerOpacity} />
+          <p className="mt-2 text-[0.62rem] uppercase tracking-luxe text-muted-foreground sm:mt-3 sm:text-[0.7rem]">
+            Act Three — Meet the Couple
+          </p>
+          <h2 className="mt-2 font-display text-[clamp(1.65rem,6vw,3.2rem)] leading-[0.96] sm:mt-3">
+            Two people, <span className="italic text-foil">one very long inside joke.</span>
+          </h2>
+        </motion.header>
+
+        {/* bubble lane — higher up, closer to heading */}
+        <div className="pointer-events-none absolute inset-x-0 top-[19%] z-40 h-[26%] sm:top-[18%] sm:h-[27%]">
+          <PersonBubble side="groom" p={p} showAt={groomEnter[1]} />
+          <PersonBubble side="bride" p={p} showAt={brideEnter[1]} />
+
+          {alternating.map((item, i) => (
+            <GapThought
+              key={item.key}
+              text={item.text}
+              p={p}
+              range={traitScrollRanges[i]!}
+              side={item.side}
+            />
+          ))}
+        </div>
+
+        <div className="absolute inset-x-0 bottom-0 z-20 mx-auto h-[min(58vh,28rem)] w-full max-w-[min(100%,26rem)] sm:h-[min(62vh,32rem)] sm:max-w-md">
+          <PersonLayer side="groom" p={p} enter={groomEnter} />
+          <PersonLayer side="bride" p={p} enter={brideEnter} />
+        </div>
+
+        <motion.p
+          style={{ opacity: scrollHintOpacity }}
+          className="absolute inset-x-0 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-30 text-center text-[0.58rem] uppercase tracking-[0.26em] text-white/90 drop-shadow-[0_1px_2px_rgba(0,0,0,0.45)]"
+        >
+          Keep scrolling
+        </motion.p>
       </div>
     </section>
   );
