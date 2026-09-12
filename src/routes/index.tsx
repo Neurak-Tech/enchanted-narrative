@@ -7,6 +7,8 @@ import ActAlbum from "@/components/wedding/ActAlbum";
 import ActJourney from "@/components/wedding/ActJourney";
 import ActFunctions from "@/components/wedding/ActFunctions";
 import ActEnd from "@/components/wedding/ActEnd";
+import { ActSeam } from "@/components/wedding/ActSeam";
+import { SEAM } from "@/components/wedding/ActSection";
 import SurpriseLayer from "@/components/wedding/SurpriseLayer";
 import { COUPLE } from "@/components/wedding/data";
 import { setSmoothScroll, type SmoothScroll } from "@/lib/smooth-scroll";
@@ -57,13 +59,19 @@ function Index() {
   }, []);
 
   return (
-    <main className="relative">
+    <main className="relative bg-[var(--seam-meadow)]">
       <ActBeginning />
+      <ActSeam from={SEAM.meadow} to={SEAM.blush} />
       <ActDate />
+      <ActSeam from={SEAM.blush} to={SEAM.coral} />
       <ActCouple />
+      <ActSeam from={SEAM.coral} to={SEAM.blush} />
       <ActAlbum />
+      <ActSeam from={SEAM.blush} to={SEAM.peachWash} />
       <ActJourney />
+      <ActSeam from={SEAM.peachWash} to={SEAM.blush} />
       <ActFunctions />
+      <ActSeam from={SEAM.blush} to={SEAM.ending} dramatic />
       <ActEnd />
       <SurpriseLayer />
     </main>

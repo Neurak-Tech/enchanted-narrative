@@ -39,6 +39,9 @@
   --color-pearl: var(--pearl);
   --color-ink: var(--ink);
   --color-night: var(--night);
+  --color-peach: var(--peach);
+  --color-terracotta: var(--terracotta);
+  --color-ember-deep: var(--ember-deep);
   --font-display: "Cormorant Garamond", ui-serif, Georgia, serif;
   --font-sans: "Jost", ui-sans-serif, system-ui, sans-serif;
   --font-script: "Italiana", ui-serif, serif;
@@ -93,18 +96,27 @@
     var(--brick) 72%,
     var(--terracotta) 100%
   );
-  --gradient-dawn: linear-gradient(
-    180deg,
-    var(--pearl) 0%,
-    color-mix(in srgb, var(--peach) 14%, white) 42%,
-    color-mix(in srgb, var(--terracotta) 18%, white) 100%
-  );
-  --gradient-night: radial-gradient(
-      ellipse at 50% 120%,
-      var(--ember-deep) 0%,
-      transparent 58%
-    ),
-    linear-gradient(180deg, #000000 0%, var(--ember-deep) 100%);
+
+  /* Shared seam colors — every act gradient starts/ends on these */
+  --seam-meadow: #cfe6c4;
+  --seam-blush: #f8ebe4;
+  --seam-coral: #e8a090;
+  --seam-peach: #e77b49;
+  --seam-terra: #b34a44;
+  --seam-dust: #e8c4b8;
+  /* Warm peach wash — visibly distinct from blush for alternating acts */
+  --seam-peach-wash: color-mix(in srgb, var(--seam-peach) 40%, white);
+  --seam-cream: var(--seam-peach-wash);
+  --seam-ember: #60241e;
+  --seam-ending: var(--brick);
+
+  /* Between-act gradient strips (see ActSeam.tsx) */
+  --act-enter-blend: clamp(14rem, 42vh, 32rem);
+
+  /* Legacy aliases */
+  --wash-meadow: var(--seam-meadow);
+  --gradient-dawn: linear-gradient(180deg, var(--seam-peach), var(--seam-blush));
+  --gradient-night: linear-gradient(180deg, var(--seam-dust), #000000);
   --shadow-soft: 0 28px 70px -28px color-mix(in srgb, var(--ink) 55%, transparent);
   --shadow-glow: 0 0 48px color-mix(in srgb, var(--peach) 50%, transparent);
   --ease-silk: cubic-bezier(0.22, 1, 0.36, 1);
@@ -120,7 +132,7 @@
   }
 
   body {
-    background-color: var(--color-background);
+    background-color: var(--seam-meadow);
     color: var(--color-foreground);
     font-family: var(--font-sans);
     overflow-x: hidden;
@@ -163,6 +175,17 @@
 
 @utility tracking-luxe {
   letter-spacing: 0.34em;
+}
+
+.act-seam {
+  height: var(--act-enter-blend);
+  width: 100%;
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+.act-seam--dramatic {
+  height: clamp(20rem, 58vh, 46rem);
 }
 
 @keyframes foil-shift {

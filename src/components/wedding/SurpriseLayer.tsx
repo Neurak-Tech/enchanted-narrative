@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 type Petal = {
   id: number;
@@ -10,41 +11,55 @@ type Petal = {
   hue: string;
 };
 
-type Spark = {
-  id: number;
-  angle: number;
-  dist: number;
-  size: number;
-  color: string;
-  delay: number;
-};
-
 type Firework = {
   id: number;
   x: number;
   y: number;
-  sparks: Spark[];
 };
 
 let seed = 0;
 
-const SPARK_COLORS = ["#e77b49", "#b34a44", "#ffffff", "#95271d", "#ff9a6a"];
+const FIREWORK_SIZE = 280;
+const FIREWORK_SRC = `${import.meta.env.BASE_URL}animations/fireworks.lottie`;
 
-function makeFirework(x: number, y: number): Firework {
-  const count = 10 + Math.floor(Math.random() * 8);
-  return {
-    id: seed++,
-    x,
-    y,
-    sparks: Array.from({ length: count }, (_, i) => ({
-      id: seed++,
-      angle: (i / count) * Math.PI * 2 + Math.random() * 0.35,
-      dist: 40 + Math.random() * 70,
-      size: 2 + Math.random() * 3.5,
-      color: SPARK_COLORS[Math.floor(Math.random() * SPARK_COLORS.length)]!,
-      delay: Math.random() * 0.12,
-    })),
+function FireworkBurst({ x, y, onComplete }: { x: number; y: number; onComplete: () => void }) {
+  const completed = useRef(false);
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
+
+  const finish = () => {
+    if (completed.current) return;
+    completed.current = true;
+    onCompleteRef.current();
   };
+
+  useEffect(() => {
+    const fallback = window.setTimeout(finish, 2400);
+    return () => window.clearTimeout(fallback);
+  }, []);
+
+  return (
+    <div
+      className="absolute"
+      style={{
+        left: x - FIREWORK_SIZE / 2,
+        top: y - FIREWORK_SIZE / 2,
+        width: FIREWORK_SIZE,
+        height: FIREWORK_SIZE,
+      }}
+    >
+      <DotLottieReact
+        src={FIREWORK_SRC}
+        autoplay
+        loop={false}
+        dotLottieRefCallback={(dotLottie) => {
+          if (!dotLottie) return;
+          dotLottie.addEventListener("complete", finish);
+        }}
+        style={{ width: "100%", height: "100%" }}
+      />
+    </div>
+  );
 }
 
 function randomPoint() {
@@ -76,10 +91,11 @@ export default function SurpriseLayer() {
     const next: Firework[] = Array.from({ length: fwCount }, (_, i) => {
       const pt = randomPoint();
       const near = i === 0;
-      return makeFirework(
-        near ? originX + (Math.random() - 0.5) * 100 : pt.x,
-        near ? Math.max(40, originY - 30 - Math.random() * 100) : pt.y,
-      );
+      return {
+        id: seed++,
+        x: near ? originX + (Math.random() - 0.5) * 100 : pt.x,
+        y: near ? Math.max(40, originY - 30 - Math.random() * 100) : pt.y,
+      };
     });
     setFireworks((f) => [...f.slice(-6), ...next]);
     setHint(false);
@@ -126,47 +142,14 @@ export default function SurpriseLayer() {
         ))}
       </AnimatePresence>
 
-      <AnimatePresence>
-        {fireworks.map((fw) => (
-          <motion.div
-            key={fw.id}
-            className="absolute left-0 top-0"
-            style={{ x: fw.x, y: fw.y }}
-            initial={{ opacity: 1 }}
-            animate={{ opacity: 0 }}
-            transition={{ duration: 1.1, ease: "easeOut" }}
-            onAnimationComplete={() => setFireworks((list) => list.filter((q) => q.id !== fw.id))}
-          >
-            <motion.span
-              className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full bg-pearl"
-              initial={{ width: 4, height: 4, opacity: 1 }}
-              animate={{ width: 28, height: 28, opacity: 0 }}
-              transition={{ duration: 0.45, ease: "easeOut" }}
-              style={{ boxShadow: "0 0 24px 6px color-mix(in srgb, var(--peach) 70%, transparent)" }}
-            />
-            {fw.sparks.map((s) => (
-              <motion.span
-                key={s.id}
-                className="absolute rounded-full"
-                style={{
-                  width: s.size,
-                  height: s.size,
-                  background: s.color,
-                  boxShadow: `0 0 8px 1px ${s.color}`,
-                }}
-                initial={{ x: 0, y: 0, opacity: 1, scale: 1 }}
-                animate={{
-                  x: Math.cos(s.angle) * s.dist,
-                  y: Math.sin(s.angle) * s.dist,
-                  opacity: 0,
-                  scale: 0.3,
-                }}
-                transition={{ duration: 0.85, delay: s.delay, ease: [0.22, 1, 0.36, 1] }}
-              />
-            ))}
-          </motion.div>
-        ))}
-      </AnimatePresence>
+      {fireworks.map((fw) => (
+        <FireworkBurst
+          key={fw.id}
+          x={fw.x}
+          y={fw.y}
+          onComplete={() => setFireworks((list) => list.filter((q) => q.id !== fw.id))}
+        />
+      ))}
 
       <AnimatePresence>
         {hint && (

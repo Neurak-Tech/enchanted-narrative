@@ -3,6 +3,7 @@ import { motion } from "motion/react";
 import couple from "@/assets/couple-illustration.png";
 import { KEEPSAKES } from "./data";
 import { HoverFloat, EnvelopeBird } from "./Motifs";
+import { ActSection } from "./ActSection";
 import Stack, { type StackHandle } from "./Stack";
 import { onSmoothScroll, type SmoothScroll } from "@/lib/smooth-scroll";
 
@@ -266,12 +267,8 @@ export default function ActAlbum() {
   const atEnd = front === lastIdx;
 
   return (
-    <section
-      ref={ref}
-      id="act-album"
-      className="relative h-screen"
-    >
-      <div className="flex h-screen flex-col bg-[linear-gradient(165deg,#ffffff,#e77b49)]">
+    <ActSection ref={ref} id="act-album" tone="light" className="h-screen">
+      <div className="relative flex h-screen flex-col bg-transparent">
         <HoverFloat className="left-[6%] top-[18%] z-10 hidden text-ink sm:block" delay={0.4}>
           <EnvelopeBird />
         </HoverFloat>
@@ -311,6 +308,6 @@ export default function ActAlbum() {
           </div>
         </div>
       </div>
-    </section>
+    </ActSection>
   );
 }

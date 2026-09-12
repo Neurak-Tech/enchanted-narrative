@@ -9,9 +9,7 @@ import {
 import couple from "@/assets/couple-illustration.png";
 import { COUPLE, COUPLE_PROFILE } from "./data";
 import { cn } from "@/lib/utils";
-
-const SECTION_BG =
-  "radial-gradient(ellipse at 50% 8%, #ffffff 0%, #e8a090 42%, #b34a44 100%)";
+import { ActSection } from "./ActSection";
 
 const GROOM_CLIP = "polygon(0% 0%, 50% 0%, 50% 100%, 0% 100%)";
 const BRIDE_CLIP = "polygon(50% 0%, 100% 0%, 100% 100%, 50% 100%)";
@@ -205,15 +203,8 @@ export default function ActCouple() {
   const scrollHintOpacity = useTransform(p, [0.9, 0.97], [0, 1]);
 
   return (
-    <section
-      ref={ref}
-      id="act-couple"
-      className="relative h-[520vh]"
-      style={{ background: SECTION_BG }}
-    >
-      <div className="sticky top-0 h-[100dvh] overflow-hidden">
-        <div className="absolute inset-0" style={{ background: SECTION_BG }} />
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_100%,transparent_35%,#00000012_100%)]" />
+    <ActSection ref={ref} id="act-couple" tone="warm" className="h-[520vh]">
+      <div className="sticky top-0 h-[100dvh] overflow-hidden bg-transparent">
 
         <motion.header
           style={{ opacity: headerOpacity, y: headerY }}
@@ -256,6 +247,6 @@ export default function ActCouple() {
           Keep scrolling
         </motion.p>
       </div>
-    </section>
+    </ActSection>
   );
 }

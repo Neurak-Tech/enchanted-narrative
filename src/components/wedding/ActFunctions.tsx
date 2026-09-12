@@ -2,6 +2,7 @@ import { useState, type ReactNode } from "react";
 import { motion } from "motion/react";
 import { FUNCTIONS } from "./data";
 import { HoverFloat, LotusKite } from "./Motifs";
+import { ActSection } from "./ActSection";
 
 const GOLD = "#e77b49";
 const BRICK = "#95271d";
@@ -172,10 +173,7 @@ function FunctionCard({
 
 export default function ActFunctions() {
   return (
-    <section
-      style={{ background: "var(--gradient-dawn)" }}
-      className="relative overflow-hidden px-4 py-28 sm:py-36"
-    >
+    <ActSection tone="light-dusk" className="overflow-hidden px-4 pb-44 pt-28 sm:pb-56 sm:pt-36">
       <HoverFloat className="right-3 top-12 z-10 text-ink sm:right-10 sm:top-16">
         <LotusKite />
       </HoverFloat>
@@ -197,6 +195,6 @@ export default function ActFunctions() {
           <FunctionCard key={fn.id} {...fn} />
         ))}
       </div>
-    </section>
+    </ActSection>
   );
 }

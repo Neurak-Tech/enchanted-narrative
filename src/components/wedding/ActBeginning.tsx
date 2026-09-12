@@ -42,6 +42,7 @@ export default function ActBeginning() {
       layers={layers}
       scene={scene}
       heightClass={journeyHeightClass}
+      tone="meadow"
     >
       {(progress) => <Title progress={progress} />}
     </ParallaxPinned>

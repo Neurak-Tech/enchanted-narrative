@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { ScratchToReveal } from "@/components/ui/scratch-to-reveal";
 import { COUPLE } from "./data";
 import { Bloom, HoverFloat, Petal, WaxSealBird } from "./Motifs";
+import { ActSection } from "./ActSection";
 
 const FOIL = {
   coverFrom: "#95271d",
@@ -123,9 +124,10 @@ export default function ActDate() {
   }, [all]);
 
   return (
-    <section
+    <ActSection
       id="act-2"
-      className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-[linear-gradient(180deg,#b34a44_0%,#ffffff_45%,#e77b49_100%)] px-5 py-24 sm:px-6 sm:py-28"
+      tone="light"
+      className="flex min-h-screen flex-col items-center justify-center overflow-hidden px-5 py-24 sm:px-6 sm:py-28"
     >
       <HoverFloat className="left-3 top-14 text-ink sm:left-10 sm:top-24">
         <WaxSealBird />
@@ -192,6 +194,6 @@ export default function ActDate() {
       )}
 
       {flowers && <FlowerFall />}
-    </section>
+    </ActSection>
   );
 }

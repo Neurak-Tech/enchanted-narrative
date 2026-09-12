@@ -3,6 +3,7 @@ import { motion, useScroll, useSpring, useReducedMotion, useTransform, type Moti
 import { cn } from "@/lib/utils";
 import { ParallaxLayer, ParallaxLayerStill } from "./ParallaxLayer";
 import type { ParallaxLayerConfig, SceneMotion } from "./types";
+import { type ActTone, BODY as PINNED_BG } from "../ActSection";
 
 export function ParallaxPinned({
   id,
@@ -11,6 +12,7 @@ export function ParallaxPinned({
   heightClass = "h-[300vh]",
   className,
   scene,
+  tone = "meadow",
 }: {
   id?: string;
   layers: ParallaxLayerConfig[];
@@ -18,7 +20,9 @@ export function ParallaxPinned({
   heightClass?: string;
   className?: string;
   scene?: SceneMotion;
+  tone?: ActTone;
 }) {
+  const bgStyle = { backgroundColor: PINNED_BG[tone] };
   const reduce = useReducedMotion();
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
@@ -43,7 +47,11 @@ export function ParallaxPinned({
 
   if (reduce) {
     return (
-      <section id={id} className={cn("relative h-dvh overflow-hidden bg-[#cfe6c4]", className)}>
+      <section
+        id={id}
+        className={cn("relative h-dvh overflow-hidden", className)}
+        style={bgStyle}
+      >
         {layers.map((layer) => (
           <ParallaxLayerStill key={layer.id} layer={layer} />
         ))}
@@ -53,8 +61,13 @@ export function ParallaxPinned({
   }
 
   return (
-    <section ref={ref} id={id} className={cn("relative", heightClass, className)}>
-      <div className="sticky top-0 h-dvh overflow-hidden bg-[#cfe6c4]">
+    <section
+      ref={ref}
+      id={id}
+      className={cn("relative", heightClass, className)}
+      style={bgStyle}
+    >
+      <div className="sticky top-0 h-dvh overflow-hidden">
         <motion.div
           className="absolute inset-0 will-change-transform"
           style={{

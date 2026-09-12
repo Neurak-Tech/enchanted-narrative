@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform, useSpring } from "motion/react";
 import { EnvelopeBird, Flight, RingCourier } from "./Motifs";
 import { MILESTONES } from "./data";
 import { cn } from "@/lib/utils";
+import { ActSection } from "./ActSection";
 
 function CoffeeWorld() {
   return (
@@ -157,8 +158,8 @@ export default function ActJourney() {
   const ribbonOpacity = useTransform(p, [0.8, 0.95], [1, 0]);
 
   return (
-    <section ref={ref} className="relative h-[480vh]" id="act-3">
-      <div className="sticky top-0 h-screen overflow-hidden bg-[linear-gradient(160deg,#ffffff,#e77b49)]">
+    <ActSection ref={ref} id="act-3" tone="warm-soft" className="h-[480vh]">
+      <div className="sticky top-0 h-screen overflow-hidden bg-transparent">
         <div className="absolute left-1/2 top-8 z-20 w-full -translate-x-1/2 px-4 text-center sm:top-12">
           <p className="text-[0.65rem] uppercase tracking-luxe text-muted-foreground sm:text-[0.7rem]">
             Act Five — Our Journey
@@ -289,6 +290,6 @@ export default function ActJourney() {
           <EnvelopeBird />
         </Flight>
       </div>
-    </section>
+    </ActSection>
   );
 }
