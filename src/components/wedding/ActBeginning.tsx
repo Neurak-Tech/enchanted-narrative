@@ -1,31 +1,25 @@
 import { useMemo } from "react";
-import { motion, useTransform, type MotionValue } from "motion/react";
 import { ParallaxPinned } from "./parallax/ParallaxPinned";
+import { JourneyRoad } from "./parallax/JourneyRoad";
 import { getJourneyLayers, getJourneyScene, journeyHeightClass } from "./parallax/journeyLayers";
 import { useMediaQuery } from "./parallax/useMediaQuery";
 
-function Title({ progress }: { progress: MotionValue<number> }) {
-  const opacity = useTransform(progress, [0, 0.32, 0.42], [1, 1, 0]);
-  const y = useTransform(progress, [0, 0.32, 0.42], ["0%", "0%", "-12%"]);
-
+function Title() {
   return (
     <>
-      <motion.div
-        style={{ opacity }}
-        className="pointer-events-none absolute inset-x-0 top-0 z-40 h-[42%] bg-gradient-to-b from-pearl/85 via-pearl/35 to-transparent md:h-[34%] md:from-pearl/75 md:via-pearl/25"
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 z-40 h-[42%] bg-gradient-to-b from-[#d7eef6]/90 via-[#d7eef6]/40 to-transparent md:h-[34%] md:from-[#d7eef6]/75 md:via-[#d7eef6]/25"
       />
-      <motion.header
-        style={{ opacity, y }}
-        className="pointer-events-none absolute inset-x-0 top-[2.5%] z-50 px-5 text-center sm:top-[4%] md:top-[5%] md:px-4"
+      <header
+        className="pointer-events-none absolute left-1/2 top-[10%] z-50 w-max max-w-[calc(100%-2.5rem)] -translate-x-1/2 text-left sm:top-[4%] md:top-[5%]"
       >
-        <p className="mb-2 text-[0.58rem] uppercase tracking-luxe text-ink/70 sm:mb-3 sm:text-[0.65rem] md:mb-4 md:text-[0.7rem]">
-          Act One — The Beginning
-        </p>
-        <h1 className="font-display text-[clamp(1.7rem,11vw,2.4rem)] leading-[0.94] text-ink sm:text-[clamp(2rem,6vw,4rem)] md:text-[clamp(2.1rem,7.4vw,5.6rem)] md:leading-[0.92]">
-          <span className="block">Two Stories.</span>
-          <span className="block italic text-foil">One Forever.</span>
+        <h1 className="font-display text-[clamp(2.1rem,9vw,4.25rem)] font-semibold leading-[0.96] text-[#241810]">
+          <span className="block">A Journey</span>
+          <span className="ml-20 block leading-[0.9] text-[#95271d]">to Remember</span>
         </h1>
-      </motion.header>
+        <p className="tracking-luxe mt-2 text-center text-[0.75rem] uppercase text-[#95271d] sm:text-xs">
+Muskan & Prajwal      </p>
+      </header>
     </>
   );
 }
@@ -43,8 +37,9 @@ export default function ActBeginning() {
       scene={scene}
       heightClass={journeyHeightClass}
       tone="meadow"
+      inScene={(progress) => <JourneyRoad progress={progress} />}
     >
-      {(progress) => <Title progress={progress} />}
+      <Title />
     </ParallaxPinned>
   );
 }

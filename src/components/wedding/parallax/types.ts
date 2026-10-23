@@ -3,6 +3,8 @@ import type { MotionValue } from "motion/react";
 export type Keyframed = {
   times: number[];
   values: Array<string | number>;
+  /** One easing function per segment (length = times.length - 1). */
+  ease?: Array<(t: number) => number>;
 };
 
 export type ParallaxLayerConfig = {

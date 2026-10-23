@@ -1,4 +1,4 @@
-import { useRef, type ReactNode, type ComponentProps } from "react";
+import { useRef } from "react";
 import {
   motion,
   useScroll,
@@ -16,9 +16,9 @@ const BRIDE_CLIP = "polygon(50% 0%, 100% 0%, 100% 100%, 50% 100%)";
 
 type Side = "bride" | "groom";
 
-function alternatingTraits() {
-  const groom = COUPLE_PROFILE.groom.traits;
-  const bride = COUPLE_PROFILE.bride.traits;
+function floatingLines() {
+  const groom = [COUPLE_PROFILE.groom.role, ...COUPLE_PROFILE.groom.traits];
+  const bride = [COUPLE_PROFILE.bride.role, ...COUPLE_PROFILE.bride.traits];
   const count = Math.max(groom.length, bride.length);
   const items: { text: string; side: Side; key: string }[] = [];
 
@@ -30,8 +30,15 @@ function alternatingTraits() {
   return items;
 }
 
-function traitRanges(start: number, count: number, step = 0.085) {
-  return Array.from({ length: count }, (_, i) => [start + i * step, start + (i + 1) * step] as const);
+/** Next line begins while the previous one is still on its way out. */
+function overlappingRanges(start: number, count: number, end = 0.92) {
+  const lead = 0.42;
+  const span = end - start;
+  const duration = span / (1 + (count - 1) * lead);
+  return Array.from({ length: count }, (_, i) => {
+    const a = start + i * duration * lead;
+    return [a, a + duration] as const;
+  });
 }
 
 function WeddingRings({ scale, opacity }: { scale: MotionValue<number>; opacity: MotionValue<number> }) {
@@ -42,12 +49,12 @@ function WeddingRings({ scale, opacity }: { scale: MotionValue<number>; opacity:
       className="mx-auto h-14 w-24 drop-shadow-sm sm:h-16 sm:w-28"
       aria-hidden
     >
-      <circle cx="42" cy="36" r="18" fill="none" stroke="#e77b49" strokeWidth="3.2" />
-      <circle cx="78" cy="36" r="18" fill="none" stroke="#000000" strokeWidth="2.6" />
+      <circle cx="42" cy="36" r="18" fill="none" stroke="#f6d98a" strokeWidth="3.2" />
+      <circle cx="78" cy="36" r="18" fill="none" stroke="#fffaf2" strokeWidth="2.6" />
       <path
         d="M56 28c2-6 8-10 14-8"
         fill="none"
-        stroke="#e77b49"
+        stroke="#ffe7a8"
         strokeWidth="1.6"
         strokeLinecap="round"
       />
@@ -55,29 +62,7 @@ function WeddingRings({ scale, opacity }: { scale: MotionValue<number>; opacity:
   );
 }
 
-function ThoughtBubble({
-  children,
-  className,
-  style,
-}: {
-  children: ReactNode;
-  className?: string;
-  style?: ComponentProps<typeof motion.div>["style"];
-}) {
-  return (
-    <motion.div
-      style={style}
-      className={cn(
-        "rounded-[1.1rem] bg-white px-3.5 py-2.5 text-ink shadow-[0_10px_32px_-10px_rgba(0,0,0,0.45)] ring-1 ring-black/15 sm:px-4 sm:py-3",
-        className,
-      )}
-    >
-      {children}
-    </motion.div>
-  );
-}
-
-function GapThought({
+function FloatingBubble({
   text,
   p,
   range,
@@ -90,29 +75,22 @@ function GapThought({
 }) {
   const [start, end] = range;
   const isGroom = side === "groom";
-  const mid = (start + end) / 2;
-  const opacity = useTransform(
-    p,
-    [start, start + (mid - start) * 0.35, end - (end - mid) * 0.35, end],
-    [0, 1, 1, 0],
-  );
-  const y = useTransform(p, [start, mid, end], [12, 0, -8]);
-  const scale = useTransform(p, [start, mid, end], [0.94, 1, 0.96]);
+  const span = end - start;
+  const opacity = useTransform(p, [start, start + span * 0.1, end - span * 0.18, end], [0, 1, 1, 0]);
+  // Starts just under the portrait lip (clipped) and rises into the gap above it.
+  const y = useTransform(p, [start, end], ["3.5vh", "-15vh"]);
+  const scale = useTransform(p, [start, start + span * 0.35, end], [0.94, 1, 0.98]);
 
   return (
-    <motion.div
+    <motion.p
       style={{ opacity, y, scale }}
       className={cn(
-        "absolute top-[42%] w-[min(44vw,11.5rem)] -translate-y-1/2 sm:top-[40%] sm:w-48",
-        isGroom ? "left-1 sm:left-3" : "right-1 sm:right-3",
+        "absolute top-full w-[min(42vw,11.5rem)] text-[clamp(0.95rem,3.5vw,1.15rem)] font-bold leading-snug text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.55)] sm:w-48",
+        isGroom ? "left-[8%] text-left sm:left-[18%]" : "right-[8%] text-right sm:right-[18%]",
       )}
     >
-      <ThoughtBubble>
-        <p className="font-script text-[clamp(0.95rem,3.5vw,1.15rem)] leading-snug tracking-[0.05em]">
-          {text}
-        </p>
-      </ThoughtBubble>
-    </motion.div>
+      {text}
+    </motion.p>
   );
 }
 
@@ -152,7 +130,7 @@ function PersonLayer({
   );
 }
 
-function PersonBubble({
+function PersonName({
   side,
   p,
   showAt,
@@ -163,31 +141,26 @@ function PersonBubble({
 }) {
   const isGroom = side === "groom";
   const name = isGroom ? COUPLE.groom : COUPLE.bride;
-  const role = isGroom ? COUPLE_PROFILE.groom.role : COUPLE_PROFILE.bride.role;
   const opacity = useTransform(p, [showAt, showAt + 0.04], [0, 1]);
   const y = useTransform(p, [showAt, showAt + 0.06], [12, 0]);
 
   return (
-    <motion.div
+    <motion.p
       style={{ opacity, y }}
       className={cn(
-        "absolute top-0 w-[min(44vw,10.5rem)] sm:w-44",
-        isGroom ? "left-1 sm:left-3" : "right-1 sm:right-3",
+        "absolute top-[17%] z-40 font-display text-[clamp(1.35rem,5vw,2rem)] leading-none text-[#fffaf2]",
+        isGroom ? "left-[8%] sm:left-[14%]" : "right-[8%] sm:right-[14%]",
       )}
     >
-      <ThoughtBubble>
-        <p className="font-script text-[0.7rem] tracking-[0.22em] sm:text-xs">{name.toUpperCase()}</p>
-        <p className="mt-1 text-[0.55rem] uppercase leading-snug tracking-[0.14em] text-muted-foreground sm:text-[0.6rem]">
-          {role}
-        </p>
-      </ThoughtBubble>
-    </motion.div>
+      {name}
+    </motion.p>
   );
 }
 
 export default function ActCouple() {
   const ref = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
+  // Progress begins as the section rises into view (before sticky pin at start/start).
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end end"] });
   const p = useSpring(scrollYProgress, { stiffness: 90, damping: 28, mass: 0.4 });
 
   const headerOpacity = useTransform(p, [0, 0.06], [0, 1]);
@@ -197,13 +170,13 @@ export default function ActCouple() {
   const groomEnter: readonly [number, number] = [0.06, 0.2];
   const brideEnter: readonly [number, number] = [0.1, 0.24];
 
-  const alternating = alternatingTraits();
-  const traitScrollRanges = traitRanges(0.22, alternating.length);
+  const lines = floatingLines();
+  const lineRanges = overlappingRanges(0.26, lines.length);
 
   const scrollHintOpacity = useTransform(p, [0.9, 0.97], [0, 1]);
 
   return (
-    <ActSection ref={ref} id="act-couple" tone="warm" className="h-[520vh]">
+    <ActSection ref={ref} id="act-couple" tone="warm" className="h-[520vh]" scrollHint={false}>
       <div className="sticky top-0 h-[100dvh] overflow-hidden bg-transparent">
 
         <motion.header
@@ -211,29 +184,25 @@ export default function ActCouple() {
           className="absolute inset-x-0 top-[max(0.75rem,env(safe-area-inset-top))] z-50 px-4 text-center sm:top-6"
         >
           <WeddingRings scale={ringScale} opacity={headerOpacity} />
-          <p className="mt-2 text-[0.62rem] uppercase tracking-luxe text-muted-foreground sm:mt-3 sm:text-[0.7rem]">
-            Act Three — Meet the Couple
-          </p>
           <h2 className="mt-2 font-display text-[clamp(1.65rem,6vw,3.2rem)] leading-[0.96] sm:mt-3">
-            Two people, <span className="italic text-foil">one very long inside joke.</span>
+            Fun facts <span className="italic text-foil">about the couple.</span>
           </h2>
         </motion.header>
 
-        {/* bubble lane — higher up, closer to heading */}
-        <div className="pointer-events-none absolute inset-x-0 top-[19%] z-40 h-[26%] sm:top-[18%] sm:h-[27%]">
-          <PersonBubble side="groom" p={p} showAt={groomEnter[1]} />
-          <PersonBubble side="bride" p={p} showAt={brideEnter[1]} />
-
-          {alternating.map((item, i) => (
-            <GapThought
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-30 h-[calc(100dvh-min(58vh,28rem))] overflow-hidden sm:h-[calc(100dvh-min(62vh,32rem))]">
+          {lines.map((item, i) => (
+            <FloatingBubble
               key={item.key}
               text={item.text}
               p={p}
-              range={traitScrollRanges[i]!}
+              range={lineRanges[i]!}
               side={item.side}
             />
           ))}
         </div>
+
+        <PersonName side="groom" p={p} showAt={groomEnter[1]} />
+        <PersonName side="bride" p={p} showAt={brideEnter[1]} />
 
         <div className="absolute inset-x-0 bottom-0 z-20 mx-auto h-[min(58vh,28rem)] w-full max-w-[min(100%,26rem)] sm:h-[min(62vh,32rem)] sm:max-w-md">
           <PersonLayer side="groom" p={p} enter={groomEnter} />

@@ -10,6 +10,10 @@ import {
 import { type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
+import { absolutePublicAsset, OG_IMAGE, publicAsset } from "@/lib/site";
+
+const ogImage = absolutePublicAsset(OG_IMAGE);
+const favicon = publicAsset(OG_IMAGE);
 
 function NotFoundComponent() {
   return (
@@ -78,7 +82,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:title", content: "Muskan & Prajwal — A Wedding in Six Acts" },
       { property: "og:description", content: "An interactive wedding story for Muskan & Prajwal." },
       { property: "og:type", content: "website" },
+      { property: "og:image", content: ogImage },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "1200" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: ogImage },
     ],
     links: [
       {
@@ -91,7 +99,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..600&family=Italiana&family=Jost:wght@300;400;500&display=swap",
       },
-      { rel: "icon", href: `${import.meta.env.BASE_URL}favicon.ico`, type: "image/x-icon" },
+      { rel: "icon", href: favicon, type: "image/png" },
+      { rel: "apple-touch-icon", href: favicon },
     ],
   }),
   shellComponent: RootShell,

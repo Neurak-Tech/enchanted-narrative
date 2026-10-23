@@ -50,68 +50,66 @@
 :root {
   --radius: 0.75rem;
 
-  /* Singular theme: maroon → brick → terracotta → peach + black & white */
+  /* Dark theme: one brick red field, light type and lines */
   --ember-deep: #60241e;
   --brick: #95271d;
-  --terracotta: #b34a44;
-  --peach: #e77b49;
-  --ink: #000000;
+  --terracotta: #f6d98a;
+  --peach: #ffe7a8;
+  --ink: #fffaf2;
   --pearl: #ffffff;
-  --night: #000000;
+  --night: #95271d;
 
-  /* Legacy semantic aliases → new palette (keeps existing class names working) */
-  --ivory: #ffffff;
-  --beige: color-mix(in srgb, var(--peach) 22%, white);
-  --gold: var(--peach);
-  --gold-deep: var(--brick);
-  --rose: var(--terracotta);
-  --blush: color-mix(in srgb, var(--peach) 28%, white);
+  /* Legacy semantic aliases → light on the dark red field */
+  --ivory: #fffaf2;
+  --beige: color-mix(in srgb, var(--peach) 28%, var(--brick));
+  --gold: #f6d98a;
+  --gold-deep: #ffe7a8;
+  --rose: #fff3c4;
+  --blush: #fff6d8;
 
-  --background: var(--pearl);
+  --background: var(--brick);
   --foreground: var(--ink);
-  --card: var(--pearl);
+  --card: var(--brick);
   --card-foreground: var(--ink);
-  --popover: var(--pearl);
+  --popover: var(--brick);
   --popover-foreground: var(--ink);
-  --primary: var(--brick);
-  --primary-foreground: var(--pearl);
-  --secondary: var(--beige);
+  --primary: var(--gold);
+  --primary-foreground: var(--brick);
+  --secondary: color-mix(in srgb, var(--brick) 82%, black);
   --secondary-foreground: var(--ink);
-  --muted: color-mix(in srgb, var(--terracotta) 12%, white);
-  --muted-foreground: #1a1a1a;
-  --accent: var(--terracotta);
-  --accent-foreground: var(--pearl);
-  --destructive: var(--brick);
-  --destructive-foreground: var(--pearl);
-  --border: color-mix(in srgb, var(--ink) 28%, transparent);
-  --input: color-mix(in srgb, var(--ink) 28%, transparent);
-  --ring: var(--peach);
+  --muted: color-mix(in srgb, var(--brick) 78%, black);
+  --muted-foreground: #f3e2b0;
+  --accent: var(--gold);
+  --accent-foreground: var(--brick);
+  --destructive: var(--gold);
+  --destructive-foreground: var(--brick);
+  --border: color-mix(in srgb, #fffaf2 72%, transparent);
+  --input: color-mix(in srgb, #fffaf2 72%, transparent);
+  --ring: var(--gold);
 
   --gradient-foil: linear-gradient(
     115deg,
-    var(--peach) 0%,
-    #ff9a6a 18%,
-    var(--terracotta) 36%,
-    var(--peach) 52%,
-    var(--brick) 72%,
-    var(--terracotta) 100%
+    #ffffff 0%,
+    #fff6d8 22%,
+    #f6d98a 48%,
+    #ffe7a8 72%,
+    #ffffff 100%
   );
 
-  /* Shared seam colors — every act gradient starts/ends on these */
+  /* Act 1 keeps the watercolor meadow; later acts sit on the dark red finale */
   --seam-meadow: #cfe6c4;
-  --seam-blush: #f8ebe4;
-  --seam-coral: #e8a090;
-  --seam-peach: #e77b49;
-  --seam-terra: #b34a44;
-  --seam-dust: #e8c4b8;
-  /* Warm peach wash — visibly distinct from blush for alternating acts */
-  --seam-peach-wash: color-mix(in srgb, var(--seam-peach) 40%, white);
-  --seam-cream: var(--seam-peach-wash);
-  --seam-ember: #60241e;
+  --seam-blush: var(--brick);
+  --seam-coral: var(--brick);
+  --seam-peach: var(--brick);
+  --seam-terra: var(--brick);
+  --seam-dust: var(--brick);
+  --seam-peach-wash: var(--brick);
+  --seam-cream: var(--brick);
+  --seam-ember: var(--brick);
   --seam-ending: var(--brick);
 
   /* Between-act gradient strips (see ActSeam.tsx) */
-  --act-enter-blend: clamp(14rem, 42vh, 32rem);
+  --act-enter-blend: clamp(7rem, 21vh, 16rem);
 
   /* Legacy aliases */
   --wash-meadow: var(--seam-meadow);
@@ -132,15 +130,15 @@
   }
 
   body {
-    background-color: var(--seam-meadow);
+    background-color: var(--brick);
     color: var(--color-foreground);
     font-family: var(--font-sans);
     overflow-x: hidden;
   }
 
   ::selection {
-    background: color-mix(in srgb, var(--peach) 45%, transparent);
-    color: var(--ink);
+    background: var(--gold);
+    color: var(--brick);
   }
 }
 
@@ -167,9 +165,9 @@
 }
 
 @utility glass-panel {
-  background: color-mix(in srgb, var(--pearl) 82%, transparent);
+  background: color-mix(in srgb, var(--brick) 88%, transparent);
   backdrop-filter: blur(18px) saturate(1.1);
-  border: 1.5px solid var(--ink);
+  border: 1.5px solid color-mix(in srgb, #fffaf2 75%, transparent);
   box-shadow: var(--shadow-soft);
 }
 
@@ -185,7 +183,7 @@
 }
 
 .act-seam--dramatic {
-  height: clamp(20rem, 58vh, 46rem);
+  height: clamp(10rem, 29vh, 23rem);
 }
 
 @keyframes foil-shift {
@@ -226,23 +224,166 @@
   }
 }
 
-@keyframes steam-rise {
-  0% {
-    opacity: 0;
-    transform: translateY(0) scale(0.6);
-  }
-  25% {
-    opacity: 0.8;
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(-90px) scale(1.4);
-  }
-}
-
 .animate-drift {
   animation: drift-y 7s ease-in-out infinite;
 }
 .animate-sparkle {
   animation: sparkle 2.6s ease-in-out infinite;
+}
+
+/* Theater curtain preloader */
+.curtain-stage {
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 48%, #6b241c 0%, #3d100c 46%, #1a0604 100%);
+}
+
+.curtain-stage__glow {
+  background: radial-gradient(ellipse 42% 36% at 50% 52%, rgba(255, 231, 168, 0.42), transparent 68%);
+}
+
+.curtain-panel {
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.28), transparent 18%, transparent 82%, rgba(0, 0, 0, 0.34)),
+    repeating-linear-gradient(
+      90deg,
+      #2a0907 0px,
+      #4a1410 7px,
+      #7a2218 16px,
+      #b03a2c 26px,
+      #7a2218 36px,
+      #4a1410 46px,
+      #2a0907 54px
+    );
+  background-size: 100% 100%, 54px 100%;
+  animation: curtain-sheen 8s ease-in-out infinite;
+}
+
+.curtain-panel--left {
+  box-shadow: inset -22px 0 36px rgba(0, 0, 0, 0.45);
+}
+
+.curtain-panel--right {
+  box-shadow: inset 22px 0 36px rgba(0, 0, 0, 0.45);
+}
+
+.curtain-panel__sheen {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    rgba(255, 246, 216, 0.07) 42%,
+    transparent 58%
+  );
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.curtain-panel__braid {
+  background: linear-gradient(180deg, #fff6d8 0%, #f6d98a 30%, #c9a227 62%, #8a6b2a 100%);
+  box-shadow: 0 0 16px rgba(246, 217, 138, 0.45);
+}
+
+.curtain-panel__swag {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.55), transparent 78%);
+  pointer-events: none;
+}
+
+.curtain-fringe {
+  background: repeating-linear-gradient(
+    90deg,
+    #f6d98a 0 2px,
+    transparent 2px 9px
+  );
+  mask-image: linear-gradient(to top, #000 20%, transparent 100%);
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.curtain-valance {
+  background:
+    linear-gradient(180deg, rgba(255, 231, 168, 0.16), transparent 36%),
+    repeating-linear-gradient(
+      90deg,
+      #1f0705 0px,
+      #4a1410 12px,
+      #95271d 26px,
+      #6b1a12 40px,
+      #2a0907 52px
+    );
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+}
+
+.curtain-rod {
+  position: absolute;
+  top: 0.35rem;
+  left: 4%;
+  right: 4%;
+  height: 7px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #fff6d8, #c9a227 55%, #6b5420);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+}
+
+.curtain-rod::before,
+.curtain-rod::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  transform: translateY(-50%);
+  background: radial-gradient(circle at 35% 30%, #fff6d8, #c9a227 60%, #6b5420);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.curtain-rod::before {
+  left: -4px;
+}
+
+.curtain-rod::after {
+  right: -4px;
+}
+
+.curtain-seal__halo {
+  background: radial-gradient(circle, rgba(246, 217, 138, 0.55), transparent 68%);
+}
+
+.curtain-seal__orbit {
+  border: 1px dashed rgba(246, 217, 138, 0.7);
+  animation: curtain-orbit 18s linear infinite;
+}
+
+.curtain-seal__ring {
+  background: radial-gradient(circle at 32% 26%, #fffaf2 0%, #f6d98a 38%, #c9a227 72%, #6b5420 100%);
+  box-shadow:
+    0 0 0 4px rgba(92, 24, 18, 0.9),
+    0 0 0 7px rgba(246, 217, 138, 0.55),
+    0 18px 40px rgba(0, 0, 0, 0.5),
+    inset 0 2px 6px rgba(255, 255, 255, 0.55);
+}
+
+.curtain-seal__wax {
+  background:
+    radial-gradient(circle at 38% 30%, #fff6d8, #e8c56a 48%, #b8923f 100%);
+  box-shadow:
+    inset 0 4px 10px rgba(255, 255, 255, 0.4),
+    inset 0 -8px 16px rgba(92, 24, 18, 0.28);
+}
+
+@keyframes curtain-sheen {
+  0%,
+  100% {
+    background-position: 0 0, 0 0;
+  }
+  50% {
+    background-position: 0 0, 18px 0;
+  }
+}
+
+@keyframes curtain-orbit {
+  to {
+    transform: rotate(360deg);
+  }
 }

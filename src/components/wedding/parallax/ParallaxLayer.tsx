@@ -4,7 +4,7 @@ import type { Keyframed, ParallaxLayerConfig } from "./types";
 function useKeyed(progress: MotionValue<number>, keyed: Keyframed | undefined, fallback: Keyframed) {
   const times = keyed?.times ?? fallback.times;
   const values = keyed?.values ?? fallback.values;
-  return useTransform(progress, times, values);
+  return useTransform(progress, times, values, keyed?.ease ? { ease: keyed.ease } : undefined);
 }
 
 export function ParallaxLayer({

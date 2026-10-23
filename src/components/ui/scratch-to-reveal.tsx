@@ -200,7 +200,7 @@ export function ScratchToReveal({
     <div
       style={{ width, height }}
       className={cn(
-        "relative isolate overflow-hidden rounded-xl border border-gold/50 bg-pearl shadow-[var(--shadow-soft)]",
+        "relative isolate overflow-hidden rounded-xl border border-[#fffaf2]/70 bg-[#95271d] shadow-none",
         className,
       )}
     >

@@ -9,6 +9,7 @@ export function ParallaxPinned({
   id,
   layers,
   children,
+  inScene,
   heightClass = "h-[300vh]",
   className,
   scene,
@@ -17,6 +18,8 @@ export function ParallaxPinned({
   id?: string;
   layers: ParallaxLayerConfig[];
   children?: ReactNode | ((progress: MotionValue<number>) => ReactNode);
+  /** Drawn inside the camera transform, between the title overlay and the layers. */
+  inScene?: ReactNode | ((progress: MotionValue<number>) => ReactNode);
   heightClass?: string;
   className?: string;
   scene?: SceneMotion;
@@ -44,6 +47,7 @@ export function ParallaxPinned({
   const sceneY = useTransform(progress, scene?.y?.times ?? [0, 1], scene?.y?.values ?? [0, 0]);
 
   const overlay = typeof children === "function" ? children(progress) : children;
+  const ground = typeof inScene === "function" ? inScene(progress) : inScene;
 
   if (reduce) {
     return (
@@ -55,6 +59,7 @@ export function ParallaxPinned({
         {layers.map((layer) => (
           <ParallaxLayerStill key={layer.id} layer={layer} />
         ))}
+        {ground}
         {typeof children === "function" ? children(progress) : children}
       </section>
     );
@@ -80,6 +85,7 @@ export function ParallaxPinned({
           {layers.map((layer) => (
             <ParallaxLayer key={layer.id} layer={layer} progress={progress} />
           ))}
+          {ground}
         </motion.div>
         {overlay}
       </div>

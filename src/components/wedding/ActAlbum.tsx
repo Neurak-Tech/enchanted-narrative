@@ -2,16 +2,15 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "motion/react";
 import couple from "@/assets/couple-illustration.png";
 import { KEEPSAKES } from "./data";
-import { HoverFloat, EnvelopeBird } from "./Motifs";
+import { PulsingHeart } from "./Motifs";
 import { ActSection } from "./ActSection";
 import Stack, { type StackHandle } from "./Stack";
 import { onSmoothScroll, type SmoothScroll } from "@/lib/smooth-scroll";
-
 function CoffeeScene() {
   return (
-    <div className="relative h-full w-full bg-[linear-gradient(180deg,#e77b49,#95271d)]">
-      <div className="absolute bottom-10 left-8 h-20 w-16 rounded-b-[2.2rem] rounded-t-md bg-pearl shadow-[var(--shadow-soft)] ring-1 ring-black/50" />
-      <div className="absolute bottom-10 right-10 h-20 w-16 rounded-b-[2.2rem] rounded-t-md bg-pearl shadow-[var(--shadow-soft)] ring-1 ring-black/50" />
+    <div className="relative h-full w-full bg-[#95271d]">
+      <div className="absolute bottom-10 left-8 h-20 w-16 rounded-b-[2.2rem] rounded-t-md bg-[#95271d] ring-2 ring-[#fffaf2]" />
+      <div className="absolute bottom-10 right-10 h-20 w-16 rounded-b-[2.2rem] rounded-t-md bg-[#95271d] ring-2 ring-[#fffaf2]" />
       <span className="absolute left-16 top-12 font-script text-4xl text-white">♥</span>
     </div>
   );
@@ -19,13 +18,13 @@ function CoffeeScene() {
 
 function CityScene() {
   return (
-    <div className="relative h-full w-full overflow-hidden bg-[linear-gradient(180deg,#000000,#60241e)]">
+    <div className="relative h-full w-full overflow-hidden bg-[#95271d]">
       <div className="absolute inset-x-4 bottom-8 flex items-end gap-1.5">
         {[42, 72, 38, 88, 54, 70].map((h, i) => (
           <div
             key={i}
             style={{ height: h }}
-            className="w-7 rounded-t-sm bg-[linear-gradient(180deg,#e77b49,#95271d)] ring-1 ring-black/40"
+            className="w-7 rounded-t-sm bg-[#95271d] ring-1 ring-[#f6d98a]"
           />
         ))}
       </div>
@@ -36,26 +35,26 @@ function CityScene() {
 
 function RingScene() {
   return (
-    <div className="relative grid h-full w-full place-items-center bg-[radial-gradient(circle_at_50%_40%,#ffffff,#b34a44)]">
+    <div className="relative grid h-full w-full place-items-center bg-[#95271d]">
       {[0, 60, 120, 180, 240, 300].map((a) => (
         <span
           key={a}
-          className="absolute h-20 w-10 rounded-[100%] bg-blush/80"
+          className="absolute h-20 w-10 rounded-[100%] bg-[#f6d98a]/80"
           style={{ transformOrigin: "50% 100%", translate: "0 -40px", rotate: `${a}deg` }}
         />
       ))}
-      <div className="relative z-10 h-16 w-16 rounded-full border-4 border-black shadow-[var(--shadow-glow)]" />
+      <div className="relative z-10 h-16 w-16 rounded-full border-4 border-[#fffaf2] shadow-[var(--shadow-glow)]" />
     </div>
   );
 }
 
 function FamilyScene() {
   return (
-    <div className="relative h-full w-full bg-[linear-gradient(160deg,#ffffff,#e77b49)]">
+    <div className="relative h-full w-full bg-[#95271d]">
       {[0, 1, 2].map((i) => (
         <div
           key={i}
-          className="absolute w-24 rounded-[2px] bg-pearl p-1.5 pb-6 shadow-[var(--shadow-soft)] ring-1 ring-black/30"
+          className="absolute w-24 rounded-[2px] bg-[#95271d] p-1.5 pb-6 ring-1 ring-[#fffaf2]"
           style={{
             left: 28 + i * 38,
             top: 36 + (i % 2) * 28,
@@ -67,8 +66,8 @@ function FamilyScene() {
             style={{
               background:
                 i === 1
-                  ? "linear-gradient(140deg, #b34a44, #e77b49)"
-                  : "linear-gradient(140deg, #95271d, #60241e)",
+                  ? "linear-gradient(140deg, #ffe7a8, #f6d98a)"
+                  : "linear-gradient(140deg, #fffaf2, #f6d98a)",
             }}
           />
         </div>
@@ -79,7 +78,7 @@ function FamilyScene() {
 
 function UsScene() {
   return (
-    <div className="relative h-full w-full bg-[radial-gradient(circle_at_50%_20%,#ffffff,#95271d)]">
+    <div className="relative h-full w-full bg-[#95271d]">
       <img
         src={couple}
         alt=""
@@ -115,7 +114,7 @@ export default function ActAlbum() {
       KEEPSAKES.map((item) => {
         const Scene = SCENES[item.scene];
         return (
-          <article key={item.year} className="flex h-full w-full flex-col bg-pearl">
+          <article key={item.year} className="flex h-full w-full flex-col bg-[#95271d] ring-1 ring-[#fffaf2]/80">
             <div className="relative min-h-0 flex-1 overflow-hidden">
               <Scene />
             </div>
@@ -269,17 +268,12 @@ export default function ActAlbum() {
   return (
     <ActSection ref={ref} id="act-album" tone="light" className="h-screen">
       <div className="relative flex h-screen flex-col bg-transparent">
-        <HoverFloat className="left-[6%] top-[18%] z-10 hidden text-ink sm:block" delay={0.4}>
-          <EnvelopeBird />
-        </HoverFloat>
+        <PulsingHeart className="left-[8%] top-[16%] z-10 hidden sm:block" delay={0.4} />
 
         <div className="relative z-10 px-6 pt-10 text-center sm:pt-14">
-          <p className="text-[0.7rem] uppercase tracking-luxe text-muted-foreground">
-            Act Four — The Album
-          </p>
-          <h2 className="mt-4 font-display text-[clamp(2rem,5vw,3.6rem)] leading-[0.95]">
-            A stack of years,{" "}
-            <span className="italic text-foil">shuffled by the scroll.</span>
+          <h2 className="font-display text-[clamp(2rem,5vw,3.6rem)] leading-[0.95]">
+            Our life in{" "}
+            <span className="italic text-foil">little frames</span>
           </h2>
         </div>
 
@@ -298,13 +292,11 @@ export default function ActAlbum() {
             >
               {current.caption}
             </motion.p>
-            <p className="mt-5 text-[0.65rem] uppercase tracking-[0.28em] text-muted-foreground">
-              {atStart
-                ? "Scroll to turn the first print"
-                : atEnd
-                  ? "Scroll to continue"
-                  : `${front + 1} of ${KEEPSAKES.length}`}
-            </p>
+            {!atStart && !atEnd && (
+              <p className="mt-5 text-[0.65rem] uppercase tracking-[0.28em] text-muted-foreground">
+                {front + 1} of {KEEPSAKES.length}
+              </p>
+            )}
           </div>
         </div>
       </div>

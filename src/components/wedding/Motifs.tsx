@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { motion, type MotionValue } from "motion/react";
 
 const INK = "currentColor";
-const GOLD = "#e77b49";
+const GOLD = "#f6d98a";
 const PEARL = "#ffffff";
 const ROSE = "#b34a44";
 
@@ -132,7 +132,7 @@ export function DiyaMoth({ className = "" }: { className?: string }) {
 /** A single petal for fall / burst animations. */
 export function Petal({
   className = "",
-  fill = "#e77b49",
+  fill = "#f6d98a",
 }: {
   className?: string;
   fill?: string;
@@ -163,9 +163,9 @@ export function Bloom({
   tone?: "blush" | "gold" | "rose";
 }) {
   const fills = {
-    blush: "#e77b49",
-    gold: "#b34a44",
-    rose: "#95271d",
+    blush: "#fff6d8",
+    gold: "#f6d98a",
+    rose: "#ffe7a8",
   } as const;
   const fill = fills[tone];
   return (
@@ -182,8 +182,32 @@ export function Bloom({
           opacity="0.92"
         />
       ))}
-      <circle cx="14" cy="14" r="3.2" fill="#60241e" />
+      <circle cx="14" cy="14" r="3.2" fill="#fffaf2" />
     </svg>
+  );
+}
+
+/** Quiet heart. Stays put and only breathes. */
+export function PulsingHeart({
+  className = "",
+  delay = 0,
+}: {
+  className?: string;
+  delay?: number;
+}) {
+  return (
+    <motion.svg
+      aria-hidden
+      viewBox="0 0 24 22"
+      className={`pointer-events-none absolute h-5 w-5 sm:h-6 sm:w-6 ${className}`}
+      animate={{ scale: [1, 1.07, 1], opacity: [0.45, 0.72, 0.45] }}
+      transition={{ duration: 3.2, repeat: Infinity, delay, ease: "easeInOut" }}
+    >
+      <path
+        fill="#f6d98a"
+        d="M12 19.2s-6.4-4-6.4-8.4C5.6 8 7.2 6.4 9.2 6.4c1.2 0 2.2.6 2.8 1.5.6-.9 1.6-1.5 2.8-1.5 2 0 3.6 1.6 3.6 4.4 0 4.4-6.4 8.4-6.4 8.4z"
+      />
+    </motion.svg>
   );
 }
 

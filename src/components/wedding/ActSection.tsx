@@ -1,4 +1,5 @@
 import { forwardRef, type CSSProperties, type ReactNode } from "react";
+import { ActScrollHint } from "./ScrollChevron";
 import { cn } from "@/lib/utils";
 
 export type ActTone =
@@ -38,8 +39,9 @@ export const ActSection = forwardRef<
     className?: string;
     style?: CSSProperties;
     children: ReactNode;
+    scrollHint?: boolean;
   }
->(function ActSection({ id, tone, className, style, children }, ref) {
+>(function ActSection({ id, tone, className, style, children, scrollHint = true }, ref) {
   return (
     <section
       ref={ref}
@@ -48,6 +50,7 @@ export const ActSection = forwardRef<
       style={{ backgroundColor: BODY[tone], ...style }}
     >
       {children}
+      {scrollHint ? <ActScrollHint /> : null}
     </section>
   );
 });
