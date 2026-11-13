@@ -93,7 +93,7 @@ export const FUNCTIONS = [
   },
   {
     id: "wedding",
-    name: "Phere",
+    name: "Phera",
     date: "25 Nov",
     time: "4 PM onwards",
     location: "Barsana Banquet",

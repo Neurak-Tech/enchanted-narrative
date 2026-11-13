@@ -28,16 +28,16 @@ function floatingFacts() {
 }
 
 const FACTS = floatingFacts();
-const FACTS_START = 0.32;
-const FACTS_END = 0.74;
-const PHOTO_LIFT: readonly [number, number] = [0.76, 0.84];
-const TOGETHER_IN: readonly [number, number] = [0.86, 0.92];
+const FACTS_START = 0.14;
+const FACTS_END = 0.92;
+const PHOTO_LIFT: readonly [number, number] = [0.9, 0.96];
+const TOGETHER_IN: readonly [number, number] = [0.96, 0.99];
 /** Portrait reveal after title lands; timeline uses start-end scroll (pre-pin). */
 const PHOTO_IN: readonly [number, number] = [0.1, 0.28];
 
 /** Next line begins as the previous one is on its way out. */
 function overlappingRanges(start: number, count: number, end: number) {
-  const lead = 0.78;
+  const lead = 0.48;
   const span = end - start;
   const duration = span / (1 + (count - 1) * lead);
   return Array.from({ length: count }, (_, i) => {
@@ -82,9 +82,9 @@ function FloatingFact({
   const isGroom = side === "groom";
   const span = end - start;
   const easeInOut = (t: number) => (t < 0.5 ? 2 * t * t : 1 - ((2 - 2 * t) ** 2) / 2);
-  const opacity = useTransform(p, [start, start + span * 0.18, end - span * 0.22, end], [0, 1, 1, 0], { ease: easeInOut });
-  const y = useTransform(p, [start, start + span * 0.5, end], ["1vh", "-0.5vh", "-1.5vh"], { ease: easeInOut });
-  const scale = useTransform(p, [start, start + span * 0.34, end], [0.96, 1, 0.98], { ease: easeInOut });
+  const opacity = useTransform(p, [start, start + span * 0.14, end - span * 0.16, end], [0, 1, 1, 0], { ease: easeInOut });
+  const y = useTransform(p, [start, start + span * 0.5, end], ["0.6vh", "-0.35vh", "-1vh"], { ease: easeInOut });
+  const scale = useTransform(p, [start, start + span * 0.38, end], [0.97, 1, 0.99], { ease: easeInOut });
 
   return (
     <motion.p
@@ -203,7 +203,7 @@ export default function ActCouple() {
       ref={ref}
       id="act-couple"
       tone="warm"
-      className="-mt-[clamp(3.5rem,11vh,7rem)] h-[380vh]"
+      className="-mt-[clamp(3.5rem,11vh,7rem)] h-[400vh]"
       scrollHint={false}
     >
       <div className="sticky top-0 grid h-[100dvh] grid-rows-[auto_minmax(6.75rem,1fr)_minmax(0,min(50dvh,30rem))] overflow-hidden bg-transparent max-md:grid-rows-[auto_minmax(4.5rem,18dvh)_minmax(0,1fr)] [@media(max-height:740px)]:grid-rows-[auto_minmax(6.5rem,1fr)_minmax(0,min(46dvh,22rem))] [@media(max-height:560px)]:grid-rows-[auto_minmax(5.5rem,1fr)_minmax(0,min(40dvh,16rem))] [@media(orientation:landscape)_and_(max-height:520px)]:grid-rows-[auto_minmax(4.25rem,1fr)_minmax(0,min(44dvh,12.5rem))] max-md:[@media(max-height:740px)]:grid-rows-[auto_minmax(4.25rem,16dvh)_minmax(0,1fr)] max-md:[@media(max-height:560px)]:grid-rows-[auto_minmax(3.75rem,14dvh)_minmax(0,1fr)]">
