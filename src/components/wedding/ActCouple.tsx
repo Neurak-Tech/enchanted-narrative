@@ -182,9 +182,10 @@ export default function ActCouple() {
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end end"] });
   const p = useSpring(scrollYProgress, { stiffness: 120, damping: 32, mass: 0.35 });
 
-  const headerOpacity = useTransform(scrollYProgress, [0, 0.05], [0, 1]);
-  const headerY = useTransform(scrollYProgress, [0, 0.07], [14, 0]);
-  const ringScale = useTransform(scrollYProgress, [0, 0.06], [0.82, 1]);
+  /** Same timeline as facts/photo (`p`); stay visible through section end — no fade at lift. */
+  const headerOpacity = useTransform(p, [0, 0.06, 1], [0, 1, 1], { clamp: true });
+  const headerY = useTransform(p, [0, 0.08, 1], [14, 0, 0], { clamp: true });
+  const ringScale = useTransform(p, [0, 0.07, 1], [0.82, 1, 1], { clamp: true });
 
   const groomEnter: readonly [number, number] = [0.1, 0.18];
   const brideEnter: readonly [number, number] = [0.12, 0.2];
