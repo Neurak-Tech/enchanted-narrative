@@ -6,9 +6,13 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
+/** GitHub Pages custom domain serves at `/`; github.io project URL uses a subpath in local dev. */
+const pagesBase =
+  process.env.GITHUB_ACTIONS === "true" ? "/" : "/enchanted-narrative/";
+
 export default defineConfig({
   vite: {
-    base: "/enchanted-narrative/",
+    base: pagesBase,
     // Avoid clashing with other local servers on :8080 (e.g. PHP on localhost IPv6).
     server: {
       port: 5174,

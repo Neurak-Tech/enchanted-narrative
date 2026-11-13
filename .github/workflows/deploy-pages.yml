@@ -30,11 +30,13 @@ jobs:
 
       - name: Build static site
         env:
-          VITE_SITE_ORIGIN: https://neurak-tech.github.io
+          VITE_SITE_ORIGIN: https://fromyaartopyaar.com
         run: npm run build
 
       - name: Add SPA fallback for GitHub Pages
-        run: cp dist/client/index.html dist/client/404.html
+        run: |
+          cp dist/client/index.html dist/client/404.html
+          test -f dist/client/CNAME || echo 'fromyaartopyaar.com' > dist/client/CNAME
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
