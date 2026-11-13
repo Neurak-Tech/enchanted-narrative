@@ -28,21 +28,40 @@ function floatingFacts() {
 }
 
 const FACTS = floatingFacts();
-const FACTS_START = 0.14;
-const FACTS_END = 0.92;
-const PHOTO_LIFT: readonly [number, number] = [0.9, 0.96];
-const TOGETHER_IN: readonly [number, number] = [0.96, 0.99];
-/** Portrait reveal after title lands; timeline uses start-end scroll (pre-pin). */
-const PHOTO_IN: readonly [number, number] = [0.1, 0.28];
 
-/** Next line begins as the previous one is on its way out. */
-function overlappingRanges(start: number, count: number, end: number) {
-  const lead = 0.48;
-  const span = end - start;
-  const duration = span / (1 + (count - 1) * lead);
+/** Scroll budget (vh); progress = vh / section height so each fact gets VH_PER_FACT of travel. */
+const VH_PER_FACT = 92;
+const INTRO_SCROLL_VH = 100;
+const OUTRO_SCROLL_VH = 420;
+const FACTS_SCROLL_VH = FACTS.length * VH_PER_FACT;
+const SECTION_SCROLL_VH = INTRO_SCROLL_VH + FACTS_SCROLL_VH + OUTRO_SCROLL_VH;
+
+function progressAt(vh: number) {
+  return vh / SECTION_SCROLL_VH;
+}
+
+const FACTS_START = progressAt(INTRO_SCROLL_VH);
+const FACTS_END = progressAt(INTRO_SCROLL_VH + FACTS_SCROLL_VH);
+const PHOTO_LIFT: readonly [number, number] = [
+  progressAt(INTRO_SCROLL_VH + FACTS_SCROLL_VH + 48),
+  progressAt(INTRO_SCROLL_VH + FACTS_SCROLL_VH + 168),
+];
+const TOGETHER_IN: readonly [number, number] = [
+  progressAt(INTRO_SCROLL_VH + FACTS_SCROLL_VH + 200),
+  progressAt(INTRO_SCROLL_VH + FACTS_SCROLL_VH + 320),
+];
+/** Portrait reveal during intro, before facts. */
+const PHOTO_IN: readonly [number, number] = [
+  progressAt(INTRO_SCROLL_VH * 0.22),
+  progressAt(INTRO_SCROLL_VH * 0.88),
+];
+
+/** One caption per scroll slot; fully fades out before the next slot starts. */
+function sequentialFactRanges(start: number, count: number, end: number) {
+  const slot = (end - start) / count;
   return Array.from({ length: count }, (_, i) => {
-    const a = start + i * duration * lead;
-    return [a, a + duration] as const;
+    const a = start + i * slot;
+    return [a, a + slot] as const;
   });
 }
 
@@ -82,12 +101,18 @@ function FloatingFact({
   const isGroom = side === "groom";
   const span = end - start;
   const easeInOut = (t: number) => (t < 0.5 ? 2 * t * t : 1 - ((2 - 2 * t) ** 2) / 2);
-  const opacity = useTransform(p, [start, start + span * 0.14, end - span * 0.16, end], [0, 1, 1, 0], { ease: easeInOut });
+  const opacity = useTransform(
+    p,
+    [start, start + span * 0.14, end - span * 0.14, end],
+    [0, 1, 1, 0],
+    { clamp: true, ease: easeInOut },
+  );
   const y = useTransform(p, [start, start + span * 0.5, end], ["0.6vh", "-0.35vh", "-1vh"], { ease: easeInOut });
   const scale = useTransform(p, [start, start + span * 0.38, end], [0.97, 1, 0.99], { ease: easeInOut });
 
   return (
     <motion.p
+      data-fun-fact=""
       style={{ opacity, y, scale }}
       className={cn(
         "absolute bottom-[10%] w-[min(46vw,16rem)] max-w-[calc(50%-0.75rem)] text-[clamp(0.8rem,2.6vw,1.08rem)] font-bold leading-snug text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.55)] max-md:bottom-1",
@@ -183,27 +208,44 @@ export default function ActCouple() {
   const p = useSpring(scrollYProgress, { stiffness: 88, damping: 30, mass: 0.45 });
 
   /** Same timeline as facts/photo (`p`); stay visible through section end — no fade at lift. */
-  const headerOpacity = useTransform(p, [0, 0.06, 1], [0, 1, 1], { clamp: true });
-  const headerY = useTransform(p, [0, 0.08, 1], [14, 0, 0], { clamp: true });
-  const ringScale = useTransform(p, [0, 0.07, 1], [0.82, 1, 1], { clamp: true });
+  const headerOpacity = useTransform(
+    p,
+    [0, progressAt(INTRO_SCROLL_VH * 0.45), 1],
+    [0, 1, 1],
+    { clamp: true },
+  );
+  const headerY = useTransform(p, [0, progressAt(INTRO_SCROLL_VH * 0.55), 1], [14, 0, 0], { clamp: true });
+  const ringScale = useTransform(p, [0, progressAt(INTRO_SCROLL_VH * 0.5), 1], [0.82, 1, 1], { clamp: true });
 
-  const groomEnter: readonly [number, number] = [0.1, 0.18];
-  const brideEnter: readonly [number, number] = [0.12, 0.2];
+  const groomEnter: readonly [number, number] = [
+    progressAt(INTRO_SCROLL_VH * 0.35),
+    progressAt(INTRO_SCROLL_VH * 0.62),
+  ];
+  const brideEnter: readonly [number, number] = [
+    progressAt(INTRO_SCROLL_VH * 0.42),
+    progressAt(INTRO_SCROLL_VH * 0.7),
+  ];
 
-  const ranges = overlappingRanges(FACTS_START, FACTS.length, FACTS_END);
+  const ranges = sequentialFactRanges(FACTS_START, FACTS.length, FACTS_END);
 
   const photoY = useTransform(p, PHOTO_LIFT, ["0vh", "-26vh"]);
   const photoScale = useTransform(p, PHOTO_LIFT, [1, 0.86]);
   const togetherOpacity = useTransform(p, TOGETHER_IN, [0, 1]);
   const togetherY = useTransform(p, TOGETHER_IN, [18, 0]);
-  const scrollHintOpacity = useTransform(p, [0.94, 0.99], [0, 1]);
+  const scrollHintOpacity = useTransform(
+    p,
+    [progressAt(SECTION_SCROLL_VH - 48), progressAt(SECTION_SCROLL_VH - 12)],
+    [0, 1],
+    { clamp: true },
+  );
 
   return (
     <ActSection
       ref={ref}
       id="act-couple"
       tone="warm"
-      className="-mt-[clamp(3.5rem,11vh,7rem)] h-[400vh]"
+      className="-mt-[clamp(3.5rem,11vh,7rem)]"
+      style={{ height: `${SECTION_SCROLL_VH}vh` }}
       scrollHint={false}
     >
       <div className="sticky top-0 grid h-[100dvh] grid-rows-[auto_minmax(6.75rem,1fr)_minmax(0,min(50dvh,30rem))] overflow-hidden bg-transparent max-md:grid-rows-[auto_minmax(4.5rem,18dvh)_minmax(0,1fr)] [@media(max-height:740px)]:grid-rows-[auto_minmax(6.5rem,1fr)_minmax(0,min(46dvh,22rem))] [@media(max-height:560px)]:grid-rows-[auto_minmax(5.5rem,1fr)_minmax(0,min(40dvh,16rem))] [@media(orientation:landscape)_and_(max-height:520px)]:grid-rows-[auto_minmax(4.25rem,1fr)_minmax(0,min(44dvh,12.5rem))] max-md:[@media(max-height:740px)]:grid-rows-[auto_minmax(4.25rem,16dvh)_minmax(0,1fr)] max-md:[@media(max-height:560px)]:grid-rows-[auto_minmax(3.75rem,14dvh)_minmax(0,1fr)]">
