@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { motion } from "motion/react";
 import { ParallaxPinned } from "./parallax/ParallaxPinned";
 import { JourneyRoad } from "./parallax/JourneyRoad";
 import { getJourneyLayers, getJourneyScene, journeyHeightClass } from "./parallax/journeyLayers";
@@ -17,8 +18,16 @@ function Title() {
           <span className="block">A Journey</span>
           <span className="ml-20 block leading-[0.9] text-[#95271d]">to Remember</span>
         </h1>
-        <p className="tracking-luxe mt-2 text-center text-[0.75rem] uppercase text-[#95271d] sm:text-xs">
-Muskan & Prajwal      </p>
+        <p className="tracking-luxe mt-2 text-center text-[0.9rem] uppercase text-[#95271d] sm:text-[0.95rem]">
+          Muskan & Prajwal
+        </p>
+        <motion.p
+          animate={{ opacity: [0.4, 0.75, 0.4], y: [0, 3, 0] }}
+          transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+          className="mt-3 text-center text-[0.58rem] uppercase tracking-[0.32em] text-[#95271d]/60"
+        >
+          Scroll
+        </motion.p>
       </header>
     </>
   );

@@ -51,7 +51,7 @@ function WeddingRings({ scale, opacity }: { scale: MotionValue<number>; opacity:
     <motion.svg
       style={{ scale, opacity }}
       viewBox="0 0 120 64"
-      className="mx-auto h-14 w-24 drop-shadow-sm sm:h-16 sm:w-28"
+      className="mx-auto h-11 w-[4.75rem] drop-shadow-sm sm:h-16 sm:w-28 [@media(max-height:560px)]:h-9 [@media(max-height:560px)]:w-16"
       aria-hidden
     >
       <circle cx="42" cy="36" r="18" fill="none" stroke="#f6d98a" strokeWidth="3.2" />
@@ -83,15 +83,15 @@ function FloatingFact({
   const span = end - start;
   const easeInOut = (t: number) => (t < 0.5 ? 2 * t * t : 1 - ((2 - 2 * t) ** 2) / 2);
   const opacity = useTransform(p, [start, start + span * 0.18, end - span * 0.22, end], [0, 1, 1, 0], { ease: easeInOut });
-  const y = useTransform(p, [start, start + span * 0.34, end], ["-6vh", "-15vh", "-18vh"], { ease: easeInOut });
+  const y = useTransform(p, [start, start + span * 0.5, end], ["1vh", "-0.5vh", "-1.5vh"], { ease: easeInOut });
   const scale = useTransform(p, [start, start + span * 0.34, end], [0.96, 1, 0.98], { ease: easeInOut });
 
   return (
     <motion.p
       style={{ opacity, y, scale }}
       className={cn(
-        "absolute top-full w-[min(62vw,16rem)] text-[clamp(0.95rem,3.5vw,1.12rem)] font-bold leading-snug text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.55)]",
-        isGroom ? "left-[8%] text-left sm:left-[18%]" : "right-[8%] text-right sm:right-[18%]",
+        "absolute bottom-[10%] w-[min(46vw,16rem)] max-w-[calc(50%-0.75rem)] text-[clamp(0.8rem,2.6vw,1.08rem)] font-bold leading-snug text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.55)] max-md:bottom-1",
+        isGroom ? "left-[4%] text-left sm:left-[10%]" : "right-[4%] text-right sm:right-[10%]",
       )}
     >
       {text}
@@ -168,8 +168,8 @@ function PersonName({
     <motion.p
       style={{ opacity, y }}
       className={cn(
-        "absolute top-[17%] z-40 font-display text-[clamp(1.35rem,5vw,2rem)] leading-none text-[#fffaf2]",
-        isGroom ? "left-[8%] sm:left-[14%]" : "right-[8%] sm:right-[14%]",
+        "absolute top-[8%] z-40 font-display text-[clamp(1.4rem,5.4vw,2.35rem)] leading-none text-[#fffaf2] max-md:top-1",
+        isGroom ? "left-[4%] sm:left-[10%]" : "right-[4%] sm:right-[10%]",
       )}
     >
       {name}
@@ -180,7 +180,7 @@ function PersonName({
 export default function ActCouple() {
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end end"] });
-  const p = useSpring(scrollYProgress, { stiffness: 120, damping: 32, mass: 0.35 });
+  const p = useSpring(scrollYProgress, { stiffness: 88, damping: 30, mass: 0.45 });
 
   /** Same timeline as facts/photo (`p`); stay visible through section end — no fade at lift. */
   const headerOpacity = useTransform(p, [0, 0.06, 1], [0, 1, 1], { clamp: true });
@@ -206,55 +206,53 @@ export default function ActCouple() {
       className="-mt-[clamp(3.5rem,11vh,7rem)] h-[380vh]"
       scrollHint={false}
     >
-      <div className="sticky top-0 h-[100dvh] overflow-hidden bg-transparent">
+      <div className="sticky top-0 grid h-[100dvh] grid-rows-[auto_minmax(6.75rem,1fr)_minmax(0,min(50dvh,30rem))] overflow-hidden bg-transparent max-md:grid-rows-[auto_minmax(4.5rem,18dvh)_minmax(0,1fr)] [@media(max-height:740px)]:grid-rows-[auto_minmax(6.5rem,1fr)_minmax(0,min(46dvh,22rem))] [@media(max-height:560px)]:grid-rows-[auto_minmax(5.5rem,1fr)_minmax(0,min(40dvh,16rem))] [@media(orientation:landscape)_and_(max-height:520px)]:grid-rows-[auto_minmax(4.25rem,1fr)_minmax(0,min(44dvh,12.5rem))] max-md:[@media(max-height:740px)]:grid-rows-[auto_minmax(4.25rem,16dvh)_minmax(0,1fr)] max-md:[@media(max-height:560px)]:grid-rows-[auto_minmax(3.75rem,14dvh)_minmax(0,1fr)]">
 
         <motion.header
           style={{ opacity: headerOpacity, y: headerY }}
-          className="absolute inset-x-0 top-[max(0.75rem,env(safe-area-inset-top))] z-50 px-4 text-center sm:top-6"
+          className="relative z-50 px-4 pb-1 pt-[max(0.4rem,env(safe-area-inset-top))] text-center sm:pt-5"
         >
           <WeddingRings scale={ringScale} opacity={headerOpacity} />
-          <h2 className="mt-2 font-display text-[clamp(1.65rem,6vw,3.2rem)] leading-[0.96] sm:mt-3">
+          <h2 className="mt-1 font-display text-[clamp(1.35rem,5vw,3.2rem)] leading-[0.96] sm:mt-3 [@media(max-height:560px)]:text-[clamp(1.2rem,6vh,1.7rem)]">
             Fun facts <span className="italic text-foil">about us.</span>
           </h2>
         </motion.header>
 
-        <div className="pointer-events-none absolute inset-x-0 top-0 z-30 h-[calc(100dvh-min(62vh,32rem))] overflow-hidden sm:h-[calc(100dvh-min(66vh,36rem))]">
+        <div className="pointer-events-none relative z-30 min-h-0 overflow-hidden">
           {FACTS.map((fact, i) => (
             <FloatingFact key={fact.key} text={fact.text} p={p} range={ranges[i]!} side={fact.side} />
           ))}
+          <PersonName side="groom" p={p} showAt={groomEnter[1]} />
+          <PersonName side="bride" p={p} showAt={brideEnter[1]} />
         </div>
-
-        <PersonName side="groom" p={p} showAt={groomEnter[1]} />
-        <PersonName side="bride" p={p} showAt={brideEnter[1]} />
 
         <motion.div
           style={{ y: photoY, scale: photoScale }}
-          className="absolute inset-x-0 bottom-0 z-20 mx-auto h-[min(62vh,32rem)] w-full max-w-[min(100%,28rem)] sm:h-[min(66vh,36rem)] sm:max-w-lg"
+          className="relative z-20 mx-auto mb-[max(0.35rem,env(safe-area-inset-bottom))] h-full w-full max-w-[min(94%,26rem)] sm:max-w-lg"
         >
           <CouplePortrait p={p} />
         </motion.div>
 
         <motion.div
           style={{ opacity: togetherOpacity, y: togetherY }}
-          className="absolute inset-x-0 bottom-[max(2.6rem,env(safe-area-inset-bottom))] z-30 px-6 text-center"
+          className="absolute inset-x-0 bottom-0 z-30 px-6 pb-[max(0.85rem,env(safe-area-inset-bottom))] text-center [@media(max-height:520px)]:pb-[max(0.45rem,env(safe-area-inset-bottom))]"
         >
-          <p className="font-display text-[clamp(1.7rem,6vw,2.5rem)] leading-none text-foil drop-shadow-[0_1px_12px_rgba(246,217,138,0.35)]">
+          <p className="font-display text-[clamp(1.7rem,6vw,2.5rem)] leading-none text-foil drop-shadow-[0_1px_12px_rgba(246,217,138,0.35)] [@media(max-height:520px)]:text-[1.45rem]">
             {COUPLE_PROFILE.together.title}
           </p>
-          <p className="mx-auto mt-3 max-w-[16rem] text-[clamp(1rem,3.6vw,1.15rem)] font-medium leading-snug text-white">
+          <p className="mx-auto mt-3 max-w-[16rem] text-[clamp(1rem,3.6vw,1.15rem)] font-medium leading-snug text-white [@media(max-height:520px)]:mt-1.5 [@media(max-height:520px)]:text-[0.95rem]">
             {COUPLE_PROFILE.together.lead}
           </p>
-          <p className="mx-auto mt-2 max-w-[22rem] text-[clamp(0.82rem,3.2vw,0.95rem)] leading-relaxed text-white/90">
+          <p className="mx-auto mt-2 max-w-[22rem] text-[clamp(0.82rem,3.2vw,0.95rem)] leading-snug text-white/90 [@media(max-height:520px)]:mt-1 [@media(max-height:520px)]:max-w-[34rem]">
             {COUPLE_PROFILE.together.line}
           </p>
+          <motion.p
+            style={{ opacity: scrollHintOpacity }}
+            className="mt-5 text-[0.62rem] uppercase leading-none tracking-[0.26em] text-white/90 drop-shadow-[0_1px_2px_rgba(0,0,0,0.45)] [@media(max-height:520px)]:mt-2.5"
+          >
+            Keep scrolling
+          </motion.p>
         </motion.div>
-
-        <motion.p
-          style={{ opacity: scrollHintOpacity }}
-          className="absolute inset-x-0 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-30 text-center text-[0.58rem] uppercase tracking-[0.26em] text-white/90 drop-shadow-[0_1px_2px_rgba(0,0,0,0.45)]"
-        >
-          Keep scrolling
-        </motion.p>
       </div>
     </ActSection>
   );
