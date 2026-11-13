@@ -10,27 +10,8 @@ import { BackgroundMusic } from "@/components/wedding/BackgroundMusic";
 import { CurtainPreloader } from "@/components/wedding/CurtainPreloader";
 import { ActSeam } from "@/components/wedding/ActSeam";
 import { SEAM } from "@/components/wedding/ActSection";
-import { COUPLE } from "@/components/wedding/data";
 import { setSmoothScroll, type SmoothScroll } from "@/lib/smooth-scroll";
-import { absolutePublicAsset, OG_IMAGE } from "@/lib/site";
-
-const ogImage = absolutePublicAsset(OG_IMAGE);
-
-const TITLE = `${COUPLE.bride} & ${COUPLE.groom} — A Wedding Story`;
-const DESC =
-  "An interactive wedding story: unlock the date, meet the couple, wander the years, and celebrate every function.";
-
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: TITLE },
-      { name: "description", content: DESC },
-      { property: "og:title", content: TITLE },
-      { property: "og:description", content: DESC },
-      { property: "og:image", content: ogImage },
-      { name: "twitter:image", content: ogImage },
-    ],
-  }),
   component: Index,
 });
 

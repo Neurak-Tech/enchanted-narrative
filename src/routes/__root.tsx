@@ -10,10 +10,11 @@ import {
 import { type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import { absolutePublicAsset, OG_IMAGE, publicAsset } from "@/lib/site";
+import { buildPageHead } from "@/lib/seo";
+import { FAVICON_IMAGE, publicAsset } from "@/lib/site";
 
-const ogImage = absolutePublicAsset(OG_IMAGE);
-const favicon = publicAsset(OG_IMAGE);
+const favicon = publicAsset(FAVICON_IMAGE);
+const pageHead = buildPageHead();
 
 function NotFoundComponent() {
   return (
@@ -74,21 +75,9 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Muskan & Prajwal — A Wedding in Six Acts" },
-      { name: "description", content: "An interactive wedding story for Muskan & Prajwal." },
-      { property: "og:title", content: "Muskan & Prajwal — A Wedding in Six Acts" },
-      { property: "og:description", content: "An interactive wedding story for Muskan & Prajwal." },
-      { property: "og:type", content: "website" },
-      { property: "og:image", content: ogImage },
-      { property: "og:image:width", content: "1200" },
-      { property: "og:image:height", content: "1200" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: ogImage },
-    ],
+    meta: pageHead.meta,
     links: [
+      ...pageHead.links,
       {
         rel: "stylesheet",
         href: appCss,
