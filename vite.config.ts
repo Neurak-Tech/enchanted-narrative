@@ -11,8 +11,9 @@ export default defineConfig({
     base: "/enchanted-narrative/",
     // Avoid clashing with other local servers on :8080 (e.g. PHP on localhost IPv6).
     server: {
-      port: 5173,
+      port: 5174,
       strictPort: true,
+      host: "127.0.0.1",
     },
   },
   tanstackStart: {

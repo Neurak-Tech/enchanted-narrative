@@ -1,100 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "motion/react";
-import couple from "@/assets/couple-illustration.png";
 import { KEEPSAKES } from "./data";
 import { PulsingHeart } from "./Motifs";
 import { ActSection } from "./ActSection";
 import Stack, { type StackHandle } from "./Stack";
 import { onSmoothScroll, type SmoothScroll } from "@/lib/smooth-scroll";
-function CoffeeScene() {
-  return (
-    <div className="relative h-full w-full bg-[#95271d]">
-      <div className="absolute bottom-10 left-8 h-20 w-16 rounded-b-[2.2rem] rounded-t-md bg-[#95271d] ring-2 ring-[#fffaf2]" />
-      <div className="absolute bottom-10 right-10 h-20 w-16 rounded-b-[2.2rem] rounded-t-md bg-[#95271d] ring-2 ring-[#fffaf2]" />
-      <span className="absolute left-16 top-12 font-script text-4xl text-white">♥</span>
-    </div>
-  );
-}
-
-function CityScene() {
-  return (
-    <div className="relative h-full w-full overflow-hidden bg-[#95271d]">
-      <div className="absolute inset-x-4 bottom-8 flex items-end gap-1.5">
-        {[42, 72, 38, 88, 54, 70].map((h, i) => (
-          <div
-            key={i}
-            style={{ height: h }}
-            className="w-7 rounded-t-sm bg-[#95271d] ring-1 ring-[#f6d98a]"
-          />
-        ))}
-      </div>
-      <div className="absolute right-6 top-8 h-10 w-10 rounded-full bg-gold/70 blur-[1px]" />
-    </div>
-  );
-}
-
-function RingScene() {
-  return (
-    <div className="relative grid h-full w-full place-items-center bg-[#95271d]">
-      {[0, 60, 120, 180, 240, 300].map((a) => (
-        <span
-          key={a}
-          className="absolute h-20 w-10 rounded-[100%] bg-[#f6d98a]/80"
-          style={{ transformOrigin: "50% 100%", translate: "0 -40px", rotate: `${a}deg` }}
-        />
-      ))}
-      <div className="relative z-10 h-16 w-16 rounded-full border-4 border-[#fffaf2] shadow-[var(--shadow-glow)]" />
-    </div>
-  );
-}
-
-function FamilyScene() {
-  return (
-    <div className="relative h-full w-full bg-[#95271d]">
-      {[0, 1, 2].map((i) => (
-        <div
-          key={i}
-          className="absolute w-24 rounded-[2px] bg-[#95271d] p-1.5 pb-6 ring-1 ring-[#fffaf2]"
-          style={{
-            left: 28 + i * 38,
-            top: 36 + (i % 2) * 28,
-            transform: `rotate(${-10 + i * 8}deg)`,
-          }}
-        >
-          <div
-            className="h-16 w-full"
-            style={{
-              background:
-                i === 1
-                  ? "linear-gradient(140deg, #ffe7a8, #f6d98a)"
-                  : "linear-gradient(140deg, #fffaf2, #f6d98a)",
-            }}
-          />
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function UsScene() {
-  return (
-    <div className="relative h-full w-full bg-[#95271d]">
-      <img
-        src={couple}
-        alt=""
-        className="absolute inset-x-0 bottom-0 mx-auto h-[108%] w-auto max-w-none object-contain"
-      />
-    </div>
-  );
-}
-
-const SCENES = {
-  coffee: CoffeeScene,
-  city: CityScene,
-  ring: RingScene,
-  family: FamilyScene,
-  us: UsScene,
-};
+import { publicAsset } from "@/lib/site";
 
 export default function ActAlbum() {
   const ref = useRef<HTMLElement>(null);
@@ -111,20 +22,21 @@ export default function ActAlbum() {
 
   const cards = useMemo(
     () =>
-      KEEPSAKES.map((item) => {
-        const Scene = SCENES[item.scene];
-        return (
-          <article key={item.year} className="flex h-full w-full flex-col bg-[#95271d] ring-1 ring-[#fffaf2]/80">
+      KEEPSAKES.map((item) => (
+          <article key={item.title} className="flex h-full w-full flex-col bg-[#95271d] ring-1 ring-[#fffaf2]/80">
             <div className="relative min-h-0 flex-1 overflow-hidden">
-              <Scene />
+              <img
+                src={publicAsset(item.image)}
+                alt={item.title}
+                className="h-full w-full object-cover"
+              />
             </div>
             <footer className="px-4 pb-4 pt-3">
               <p className="font-script text-[0.7rem] tracking-[0.35em] text-gold-deep">{item.year}</p>
               <h3 className="mt-1 font-display text-xl leading-tight text-ink">{item.title}</h3>
             </footer>
           </article>
-        );
-      }),
+      )),
     [],
   );
 
@@ -272,8 +184,8 @@ export default function ActAlbum() {
 
         <div className="relative z-10 px-6 pt-10 text-center sm:pt-14">
           <h2 className="font-display text-[clamp(2rem,5vw,3.6rem)] leading-[0.95]">
-            Our life in{" "}
-            <span className="italic text-foil">little frames</span>
+            A little bit of us,{" "}
+            <span className="italic text-foil">a whole lot of love</span>
           </h2>
         </div>
 

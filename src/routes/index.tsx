@@ -34,12 +34,30 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
+function scrollPageToTop(immediate = true) {
+  if (typeof window === "undefined") return;
+  window.history.scrollRestoration = "manual";
+  window.scrollTo({ top: 0, left: 0, behavior: immediate ? "auto" : "smooth" });
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
+  const lenis = (window as unknown as { __smoothScroll?: SmoothScroll }).__smoothScroll;
+  lenis?.scrollTo(0, { immediate: true });
+}
+
 function Index() {
   const [curtainDone, setCurtainDone] = useState(false);
 
   useLayoutEffect(() => {
-    window.history.scrollRestoration = "manual";
-    window.scrollTo(0, 0);
+    scrollPageToTop(true);
+  }, []);
+
+  useEffect(() => {
+    const onPageShow = (e: PageTransitionEvent) => {
+      if (e.persisted) scrollPageToTop(true);
+    };
+    window.addEventListener("pageshow", onPageShow);
+    scrollPageToTop(true);
+    return () => window.removeEventListener("pageshow", onPageShow);
   }, []);
 
   useEffect(() => {
@@ -55,6 +73,7 @@ function Index() {
       lenis = instance;
       setSmoothScroll(instance);
       (window as unknown as { __smoothScroll?: SmoothScroll }).__smoothScroll = instance;
+      scrollPageToTop(true);
       const loop = (time: number) => {
         lenis?.raf(time);
         raf = requestAnimationFrame(loop);
@@ -73,17 +92,16 @@ function Index() {
 
   return (
     <>
+      <BackgroundMusic visible={curtainDone} />
       <CurtainPreloader onComplete={() => setCurtainDone(true)} />
       <main
         className="relative bg-[var(--seam-meadow)]"
         aria-hidden={!curtainDone}
         inert={!curtainDone ? true : undefined}
       >
-      <BackgroundMusic />
       <ActBeginning />
-      <ActSeam from={SEAM.meadow} to={SEAM.blush} />
       <ActDate />
-      <ActSeam from={SEAM.blush} to={SEAM.coral} />
+      <ActSeam from={SEAM.blush} to={SEAM.coral} compact />
       <ActCouple />
       <ActSeam from={SEAM.coral} to={SEAM.blush} />
       <ActAlbum />

@@ -6,33 +6,38 @@ import {
   useSpring,
   type MotionValue,
 } from "motion/react";
-import couple from "@/assets/couple-illustration.png";
+import couplePhoto from "@/assets/couple-photo.jpg";
 import { COUPLE, COUPLE_PROFILE } from "./data";
 import { cn } from "@/lib/utils";
 import { ActSection } from "./ActSection";
 
-const GROOM_CLIP = "polygon(0% 0%, 50% 0%, 50% 100%, 0% 100%)";
-const BRIDE_CLIP = "polygon(50% 0%, 100% 0%, 100% 100%, 50% 100%)";
-
 type Side = "bride" | "groom";
 
-function floatingLines() {
-  const groom = [COUPLE_PROFILE.groom.role, ...COUPLE_PROFILE.groom.traits];
-  const bride = [COUPLE_PROFILE.bride.role, ...COUPLE_PROFILE.bride.traits];
+function floatingFacts() {
+  const groom = COUPLE_PROFILE.groom.traits;
+  const bride = COUPLE_PROFILE.bride.traits;
   const count = Math.max(groom.length, bride.length);
   const items: { text: string; side: Side; key: string }[] = [];
 
   for (let i = 0; i < count; i++) {
-    if (groom[i]) items.push({ text: groom[i]!, side: "groom", key: `g-${i}` });
-    if (bride[i]) items.push({ text: bride[i]!, side: "bride", key: `b-${i}` });
+    if (groom[i]) items.push({ text: groom[i], side: "groom", key: `g-${i}` });
+    if (bride[i]) items.push({ text: bride[i], side: "bride", key: `b-${i}` });
   }
 
   return items;
 }
 
-/** Next line begins while the previous one is still on its way out. */
-function overlappingRanges(start: number, count: number, end = 0.92) {
-  const lead = 0.42;
+const FACTS = floatingFacts();
+const FACTS_START = 0.32;
+const FACTS_END = 0.74;
+const PHOTO_LIFT: readonly [number, number] = [0.76, 0.84];
+const TOGETHER_IN: readonly [number, number] = [0.86, 0.92];
+/** Portrait reveal after title lands; timeline uses start-end scroll (pre-pin). */
+const PHOTO_IN: readonly [number, number] = [0.1, 0.28];
+
+/** Next line begins as the previous one is on its way out. */
+function overlappingRanges(start: number, count: number, end: number) {
+  const lead = 0.78;
   const span = end - start;
   const duration = span / (1 + (count - 1) * lead);
   return Array.from({ length: count }, (_, i) => {
@@ -62,7 +67,7 @@ function WeddingRings({ scale, opacity }: { scale: MotionValue<number>; opacity:
   );
 }
 
-function FloatingBubble({
+function FloatingFact({
   text,
   p,
   range,
@@ -76,16 +81,16 @@ function FloatingBubble({
   const [start, end] = range;
   const isGroom = side === "groom";
   const span = end - start;
-  const opacity = useTransform(p, [start, start + span * 0.1, end - span * 0.18, end], [0, 1, 1, 0]);
-  // Starts just under the portrait lip (clipped) and rises into the gap above it.
-  const y = useTransform(p, [start, end], ["3.5vh", "-15vh"]);
-  const scale = useTransform(p, [start, start + span * 0.35, end], [0.94, 1, 0.98]);
+  const easeInOut = (t: number) => (t < 0.5 ? 2 * t * t : 1 - ((2 - 2 * t) ** 2) / 2);
+  const opacity = useTransform(p, [start, start + span * 0.18, end - span * 0.22, end], [0, 1, 1, 0], { ease: easeInOut });
+  const y = useTransform(p, [start, start + span * 0.34, end], ["-6vh", "-15vh", "-18vh"], { ease: easeInOut });
+  const scale = useTransform(p, [start, start + span * 0.34, end], [0.96, 1, 0.98], { ease: easeInOut });
 
   return (
     <motion.p
       style={{ opacity, y, scale }}
       className={cn(
-        "absolute top-full w-[min(42vw,11.5rem)] text-[clamp(0.95rem,3.5vw,1.15rem)] font-bold leading-snug text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.55)] sm:w-48",
+        "absolute top-full w-[min(62vw,16rem)] text-[clamp(0.95rem,3.5vw,1.12rem)] font-bold leading-snug text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.55)]",
         isGroom ? "left-[8%] text-left sm:left-[18%]" : "right-[8%] text-right sm:right-[18%]",
       )}
     >
@@ -94,38 +99,53 @@ function FloatingBubble({
   );
 }
 
-function PersonLayer({
-  side,
-  p,
-  enter,
-}: {
-  side: Side;
-  p: MotionValue<number>;
-  enter: readonly [number, number];
-}) {
-  const isGroom = side === "groom";
-  const enterX = useTransform(p, enter, isGroom ? ["-65vw", "0vw"] : ["65vw", "0vw"]);
-  const enterY = useTransform(p, enter, ["50vh", "0vh"]);
-  const opacity = useTransform(p, [enter[0], enter[0] + 0.05], [0, 1]);
+function CouplePortrait({ p }: { p: MotionValue<number> }) {
+  const reveal = useTransform(p, PHOTO_IN, [0, 1]);
+  const opacity = useTransform(reveal, [0, 0.12], [0, 1]);
+  const scale = useTransform(reveal, [0, 1], [1.12, 1]);
+  // Opens from a window on their faces until the terrace is in frame.
+  const clipPath = useTransform(reveal, (t) => {
+    const ease = t < 0.5 ? 2 * t * t : 1 - ((2 - 2 * t) ** 2) / 2;
+    const top = (1 - ease) * 30;
+    const side = (1 - ease) * 8;
+    const bottom = (1 - ease) * 36;
+    const radius = 24 - ease * 8;
+    return `inset(${top}% ${side}% ${bottom}% ${side}% round ${radius}px)`;
+  });
 
   return (
     <motion.div
-      className="absolute inset-0"
-      style={{
-        clipPath: isGroom ? GROOM_CLIP : BRIDE_CLIP,
-        x: enterX,
-        y: enterY,
-        opacity,
-      }}
+      className="group absolute bottom-[max(1.75rem,env(safe-area-inset-bottom))] left-1/2 h-[92%] w-auto max-w-[96%] -translate-x-1/2 aspect-[681/1024]"
+      style={{ opacity, clipPath }}
     >
-      <img
-        src={couple}
-        alt=""
-        aria-hidden
-        width={1536}
-        height={1024}
-        className="absolute bottom-0 left-1/2 h-[108%] w-auto max-w-none -translate-x-1/2 object-contain object-bottom"
-      />
+      <div className="relative h-full w-full">
+        <span
+          aria-hidden
+          className="pointer-events-none absolute -inset-8 rounded-[1.75rem] bg-[#f6d98a]/45 blur-3xl sm:-inset-10"
+        />
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-0 rounded-2xl bg-[radial-gradient(ellipse_at_center,rgba(246,217,138,0.38)_0%,rgba(246,217,138,0)_72%)]"
+        />
+        <motion.div
+          className="relative h-full w-full overflow-hidden rounded-2xl border border-[#f6d98a]/70 shadow-[0_0_28px_rgba(246,217,138,0.45),0_0_64px_rgba(246,217,138,0.22)]"
+          whileHover={{ scale: 1.055 }}
+          transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <motion.img
+            src={couplePhoto}
+            alt={`${COUPLE.groom} and ${COUPLE.bride}`}
+            width={681}
+            height={1024}
+            style={{ scale, transformOrigin: "center 46%" }}
+            className="h-full w-full object-cover"
+          />
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-y-[-10%] left-0 w-1/3 -translate-x-full rotate-12 bg-gradient-to-r from-transparent via-[#fff6d8]/70 to-transparent opacity-0 transition-[transform,opacity] duration-700 ease-out group-hover:translate-x-[280%] group-hover:opacity-100"
+          />
+        </motion.div>
+      </div>
     </motion.div>
   );
 }
@@ -141,8 +161,8 @@ function PersonName({
 }) {
   const isGroom = side === "groom";
   const name = isGroom ? COUPLE.groom : COUPLE.bride;
-  const opacity = useTransform(p, [showAt, showAt + 0.04], [0, 1]);
-  const y = useTransform(p, [showAt, showAt + 0.06], [12, 0]);
+  const opacity = useTransform(p, [showAt, showAt + 0.03, PHOTO_LIFT[0], PHOTO_LIFT[0] + 0.04], [0, 1, 1, 0]);
+  const y = useTransform(p, [showAt, showAt + 0.05], [12, 0]);
 
   return (
     <motion.p
@@ -159,24 +179,32 @@ function PersonName({
 
 export default function ActCouple() {
   const ref = useRef<HTMLElement>(null);
-  // Progress begins as the section rises into view (before sticky pin at start/start).
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end end"] });
-  const p = useSpring(scrollYProgress, { stiffness: 90, damping: 28, mass: 0.4 });
+  const p = useSpring(scrollYProgress, { stiffness: 120, damping: 32, mass: 0.35 });
 
-  const headerOpacity = useTransform(p, [0, 0.06], [0, 1]);
-  const headerY = useTransform(p, [0, 0.08], [16, 0]);
-  const ringScale = useTransform(p, [0, 0.07], [0.78, 1]);
+  const headerOpacity = useTransform(scrollYProgress, [0, 0.05], [0, 1]);
+  const headerY = useTransform(scrollYProgress, [0, 0.07], [14, 0]);
+  const ringScale = useTransform(scrollYProgress, [0, 0.06], [0.82, 1]);
 
-  const groomEnter: readonly [number, number] = [0.06, 0.2];
-  const brideEnter: readonly [number, number] = [0.1, 0.24];
+  const groomEnter: readonly [number, number] = [0.1, 0.18];
+  const brideEnter: readonly [number, number] = [0.12, 0.2];
 
-  const lines = floatingLines();
-  const lineRanges = overlappingRanges(0.26, lines.length);
+  const ranges = overlappingRanges(FACTS_START, FACTS.length, FACTS_END);
 
-  const scrollHintOpacity = useTransform(p, [0.9, 0.97], [0, 1]);
+  const photoY = useTransform(p, PHOTO_LIFT, ["0vh", "-26vh"]);
+  const photoScale = useTransform(p, PHOTO_LIFT, [1, 0.86]);
+  const togetherOpacity = useTransform(p, TOGETHER_IN, [0, 1]);
+  const togetherY = useTransform(p, TOGETHER_IN, [18, 0]);
+  const scrollHintOpacity = useTransform(p, [0.94, 0.99], [0, 1]);
 
   return (
-    <ActSection ref={ref} id="act-couple" tone="warm" className="h-[520vh]" scrollHint={false}>
+    <ActSection
+      ref={ref}
+      id="act-couple"
+      tone="warm"
+      className="-mt-[clamp(3.5rem,11vh,7rem)] h-[380vh]"
+      scrollHint={false}
+    >
       <div className="sticky top-0 h-[100dvh] overflow-hidden bg-transparent">
 
         <motion.header
@@ -185,29 +213,40 @@ export default function ActCouple() {
         >
           <WeddingRings scale={ringScale} opacity={headerOpacity} />
           <h2 className="mt-2 font-display text-[clamp(1.65rem,6vw,3.2rem)] leading-[0.96] sm:mt-3">
-            Fun facts <span className="italic text-foil">about the couple.</span>
+            Fun facts <span className="italic text-foil">about us.</span>
           </h2>
         </motion.header>
 
-        <div className="pointer-events-none absolute inset-x-0 top-0 z-30 h-[calc(100dvh-min(58vh,28rem))] overflow-hidden sm:h-[calc(100dvh-min(62vh,32rem))]">
-          {lines.map((item, i) => (
-            <FloatingBubble
-              key={item.key}
-              text={item.text}
-              p={p}
-              range={lineRanges[i]!}
-              side={item.side}
-            />
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-30 h-[calc(100dvh-min(62vh,32rem))] overflow-hidden sm:h-[calc(100dvh-min(66vh,36rem))]">
+          {FACTS.map((fact, i) => (
+            <FloatingFact key={fact.key} text={fact.text} p={p} range={ranges[i]!} side={fact.side} />
           ))}
         </div>
 
         <PersonName side="groom" p={p} showAt={groomEnter[1]} />
         <PersonName side="bride" p={p} showAt={brideEnter[1]} />
 
-        <div className="absolute inset-x-0 bottom-0 z-20 mx-auto h-[min(58vh,28rem)] w-full max-w-[min(100%,26rem)] sm:h-[min(62vh,32rem)] sm:max-w-md">
-          <PersonLayer side="groom" p={p} enter={groomEnter} />
-          <PersonLayer side="bride" p={p} enter={brideEnter} />
-        </div>
+        <motion.div
+          style={{ y: photoY, scale: photoScale }}
+          className="absolute inset-x-0 bottom-0 z-20 mx-auto h-[min(62vh,32rem)] w-full max-w-[min(100%,28rem)] sm:h-[min(66vh,36rem)] sm:max-w-lg"
+        >
+          <CouplePortrait p={p} />
+        </motion.div>
+
+        <motion.div
+          style={{ opacity: togetherOpacity, y: togetherY }}
+          className="absolute inset-x-0 bottom-[max(2.6rem,env(safe-area-inset-bottom))] z-30 px-6 text-center"
+        >
+          <p className="font-display text-[clamp(1.7rem,6vw,2.5rem)] leading-none text-foil drop-shadow-[0_1px_12px_rgba(246,217,138,0.35)]">
+            {COUPLE_PROFILE.together.title}
+          </p>
+          <p className="mx-auto mt-3 max-w-[16rem] text-[clamp(1rem,3.6vw,1.15rem)] font-medium leading-snug text-white">
+            {COUPLE_PROFILE.together.lead}
+          </p>
+          <p className="mx-auto mt-2 max-w-[22rem] text-[clamp(0.82rem,3.2vw,0.95rem)] leading-relaxed text-white/90">
+            {COUPLE_PROFILE.together.line}
+          </p>
+        </motion.div>
 
         <motion.p
           style={{ opacity: scrollHintOpacity }}

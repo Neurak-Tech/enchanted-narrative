@@ -37,6 +37,7 @@ export default function ActBeginning() {
       scene={scene}
       heightClass={journeyHeightClass}
       tone="meadow"
+      smoothScrollProgress={false}
       inScene={(progress) => <JourneyRoad progress={progress} />}
     >
       <Title />

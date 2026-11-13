@@ -8,7 +8,8 @@ export const getRouter = () => {
   const router = createRouter({
     routeTree,
     context: { queryClient },
-    scrollRestoration: true,
+    // Single-page story: always land at the top on full reload (see index scroll reset).
+    scrollRestoration: false,
     defaultPreloadStaleTime: 0,
   });
 

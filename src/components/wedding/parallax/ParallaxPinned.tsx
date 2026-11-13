@@ -14,6 +14,8 @@ export function ParallaxPinned({
   className,
   scene,
   tone = "meadow",
+  /** Act 1 exit needs 1:1 scroll mapping — spring lag was cutting the finale short. */
+  smoothScrollProgress = true,
 }: {
   id?: string;
   layers: ParallaxLayerConfig[];
@@ -24,6 +26,7 @@ export function ParallaxPinned({
   className?: string;
   scene?: SceneMotion;
   tone?: ActTone;
+  smoothScrollProgress?: boolean;
 }) {
   const bgStyle = { backgroundColor: PINNED_BG[tone] };
   const reduce = useReducedMotion();
@@ -32,11 +35,12 @@ export function ParallaxPinned({
     target: ref,
     offset: ["start start", "end end"],
   });
-  const progress = useSpring(scrollYProgress, {
+  const sprung = useSpring(scrollYProgress, {
     stiffness: 38,
     damping: 34,
     mass: 0.85,
   });
+  const progress = smoothScrollProgress ? sprung : scrollYProgress;
 
   const sceneScale = useTransform(
     progress,

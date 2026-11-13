@@ -7,45 +7,64 @@ export const COUPLE = {
 
 export const COUPLE_PROFILE = {
   bride: {
-    role: "The one who makes it magic",
-    traits: ["Laughs too loud", "Reads two books at once", "Said yes instantly", "Collects postcards"],
+    traits: [
+      "Professional overthinker.",
+      "Shopping is her cardio.",
+      "Sends Prajwal reels throughout the day — commentary optional, reaction mandatory.",
+      "Says “I’m ready” — which generally means 20 minutes more.",
+      "Has a reference picture for absolutely everything.",
+      "Can turn a 2-minute update into a full-blown story — complete with context, backstory and supporting evidence.",
+    ],
   },
   groom: {
-    role: "The one who plans everything twice",
-    traits: ["Makes terrible puns", "Can't cook rice", "Cried first", "Secretly a dancer"],
+    traits: [
+      "Has “almost” mastered the art of listening to Muskan’s daily debriefs.",
+      "Has a remarkable talent for starting a series and never finishing it.",
+      "Can turn almost any conversation into gyaan.",
+      "Thinks every argument can be won with logic.",
+      "Will say he’s “not hungry” and then eat half of Muskan’s food.",
+      "Believes every problem can be solved with the timeless philosophy of “let’s see.”",
+      "Can sleep anywhere and anytime.",
+    ],
+  },
+  together: {
+    title: "Together?",
+    lead: "Somehow, it works.",
+    line: "We’re still figuring out whether that’s because we’re perfectly compatible…. or because after 10 years, we’ve simply become very good at negotiating.",
   },
 } as const;
 
+/** Stack index 0 = top card; index 4 = bottom. Years 2024–2026 with a few repeats. */
 export const KEEPSAKES = [
   {
-    year: "2019",
-    title: "Filter coffee, still talking",
-    caption: "The cups went cold. We did not.",
-    scene: "coffee" as const,
-  },
-  {
-    year: "2022",
-    title: "Lisbon after midnight",
-    caption: "Yellow trams. A rooftop promise.",
-    scene: "city" as const,
-  },
-  {
-    year: "2024",
-    title: "Desert roses",
-    caption: "She said yes before the sentence finished.",
-    scene: "ring" as const,
-  },
-  {
-    year: "2025",
-    title: "One table",
-    caption: "Polaroids, too much food, lights out late.",
-    scene: "family" as const,
+    year: "2026",
+    title: "Happily ever after",
+    caption: "Two stories, one forever",
+    image: "images/cards/meadow.jpg",
   },
   {
     year: "2026",
+    title: "The Families find out",
+    caption: "The easiest yes, every single day",
+    image: "images/cards/party.jpg",
+  },
+  {
+    year: "2025",
+    title: "The Proposal",
+    caption: "Two peas in a pod",
+    image: "images/cards/embrace.jpg",
+  },
+  {
+    year: "2025",
+    title: "Dilwali Diwali",
+    caption: "Just two people, a million memories",
+    image: "images/cards/night.jpg",
+  },
+  {
+    year: "2024",
     title: "The walk",
-    caption: "Two stories. One forever.",
-    scene: "us" as const,
+    caption: "From stolen glances to forever plans",
+    image: "images/cards/rooftop.jpg",
   },
 ] as const;
 
@@ -74,7 +93,7 @@ export const FUNCTIONS = [
   },
   {
     id: "wedding",
-    name: "Sacred Vows",
+    name: "Shaadi",
     date: "25 Nov",
     time: "4 PM onwards",
     location: "Barsana Banquet",

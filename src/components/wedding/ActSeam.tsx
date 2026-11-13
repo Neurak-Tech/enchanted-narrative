@@ -12,16 +12,23 @@ export function ActSeam({
   from,
   to,
   dramatic,
+  compact,
 }: {
   from: string;
   to: string;
   /** Taller strip + stronger curve (e.g. blush → red finale). */
   dramatic?: boolean;
+  /** Shorter handoff when the next act should pin quickly (e.g. date → couple). */
+  compact?: boolean;
 }) {
   return (
     <div
       aria-hidden
-      className={cn("act-seam", dramatic && "act-seam--dramatic")}
+      className={cn(
+        "act-seam",
+        dramatic && "act-seam--dramatic",
+        compact && "act-seam--compact",
+      )}
       style={{ background: seamGradient(from, to, dramatic) }}
     />
   );
