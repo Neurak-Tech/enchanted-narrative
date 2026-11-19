@@ -27,8 +27,8 @@ export function absolutePublicAsset(path: string) {
   return `${siteOrigin}${relative.startsWith("/") ? relative : `/${relative}`}`;
 }
 
-/** Social preview image (served from `/public`). White MNP logo on brick red. */
-export const OG_IMAGE = "share-og.png";
+/** Social preview image. New filename so chat apps drop the cached card. */
+export const OG_IMAGE = "share-logo.jpg";
 
 /** Favicon / touch icon — black MNP monogram. */
 export const FAVICON_IMAGE = "favicon.png";

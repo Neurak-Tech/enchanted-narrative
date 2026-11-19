@@ -10,7 +10,7 @@ export const PAGE_TITLE = "Muskan and Prajwal, A Journey Written Under The Stars
 
 export const OG_IMAGE_ALT = `${COUPLE.bride} and ${COUPLE.groom} — wedding invitation and love story`;
 
-/** Width / height of `public/share-og.png` (keep in sync if the asset changes). */
+/** Width / height of `public/share-logo.jpg` (keep in sync if the asset changes). */
 export const OG_IMAGE_WIDTH = "1200";
 export const OG_IMAGE_HEIGHT = "1200";
 
@@ -31,7 +31,7 @@ export function buildPageHead() {
       { property: "og:image", content: ogImage },
       { property: "og:image:url", content: ogImage },
       { property: "og:image:secure_url", content: ogImage },
-      { property: "og:image:type", content: "image/png" },
+      { property: "og:image:type", content: "image/jpeg" },
       { property: "og:image:width", content: OG_IMAGE_WIDTH },
       { property: "og:image:height", content: OG_IMAGE_HEIGHT },
       { property: "og:image:alt", content: OG_IMAGE_ALT },
