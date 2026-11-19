@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
-import waxSeal from "@/assets/wax-seal.png";
+import waxSeal from "@/assets/wax-seal.webp";
 import { startBackgroundMusicFromUserGesture } from "@/lib/background-music";
 import {
   startCurtainDrumroll,

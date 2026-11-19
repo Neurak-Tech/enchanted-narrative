@@ -1,7 +1,7 @@
 import landscape from "@/assets/parallax/landscape.webp";
-import car from "@/assets/parallax/car.png";
-import siddhiVatika from "@/assets/parallax/siddhi-vatika.png";
-import hundredPearls from "@/assets/parallax/hundred-pearls.png";
+import car from "@/assets/parallax/car.webp";
+import siddhiVatika from "@/assets/parallax/siddhi-vatika.webp";
+import hundredPearls from "@/assets/parallax/hundred-pearls.webp";
 import type { ParallaxLayerConfig, SceneMotion } from "./types";
 
 const easeOut = (t: number) => 1 - (1 - t) ** 2;

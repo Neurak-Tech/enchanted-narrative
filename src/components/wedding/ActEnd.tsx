@@ -1,4 +1,4 @@
-import logoWhite from "@/assets/logo-white.png";
+import logoWhite from "@/assets/logo-white.webp";
 import { COUPLE } from "./data";
 import { ActSection } from "./ActSection";
 import { PulsingHeart } from "./Motifs";
