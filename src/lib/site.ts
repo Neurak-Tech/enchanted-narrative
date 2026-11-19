@@ -30,5 +30,5 @@ export function absolutePublicAsset(path: string) {
 /** Social preview image (served from `/public`). */
 export const OG_IMAGE = "share-og.jpg";
 
-/** Favicon / touch icon (monogram on dark). */
-export const FAVICON_IMAGE = "logo-white.png";
+/** Favicon / touch icon — black MNP monogram. */
+export const FAVICON_IMAGE = "favicon.png";
