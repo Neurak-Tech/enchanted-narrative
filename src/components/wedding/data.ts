@@ -72,14 +72,14 @@ export const FUNCTIONS = [
   {
     id: "haldi",
     name: "Halki si Haldi",
-    date: "23 Nov",
+    date: "24 Nov",
     time: "11 AM onwards",
     location: "Poolside",
   },
   {
     id: "mehendi",
     name: "Shaam Shandaar",
-    date: "23 Nov",
+    date: "24 Nov",
     time: "6 PM onwards",
     location: "Barsana Lawn",
     theme: "Henna, music, and soft peach florals at dusk",
